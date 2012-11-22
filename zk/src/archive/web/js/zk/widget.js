@@ -3428,8 +3428,19 @@ focus_: function (timeout) {
 	 */
 	beforeSendAU_: function (wgt, evt) {
 		var en = evt.name;
-		if (en == 'onClick' || en == 'onRightClick' || en == 'onDoubleClick')
+		if (en == 'onClick' || en == 'onDoubleClick')
 			evt.shallStop = true;//Bug: 2975748: popup won't work when component with onClick handler
+		// Bug ZK-1475: Context menu does not work when children have right-click event listener
+		if (en == 'onRightClick') {
+			var contextMenu = false, p = wgt;
+			while (p = p.parent) {
+				if (p._context) {
+					contextMenu = true;
+					break;
+				}
+			}
+			evt.shallStop = !contextMenu;
+		}
 	},
 	/** Sends an AU request to the server.
 	 * It is invoked when {@link #fire} will send an AU request to the server.

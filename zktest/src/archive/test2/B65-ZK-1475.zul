@@ -1,0 +1,51 @@
+<zk>
+	<html>
+		Testing instructions:
+		<ol>
+			<li>Right-click on 'Item 1'</li>
+		</ol>
+		
+		Expected results:
+		<ul>
+			<li>The label should change to 'onRightClick'</li>
+			<li>Context menu should show up</li>
+		</ul>
+	</html>
+	<zscript><![CDATA[
+	import org.zkoss.zul.Treeitem;
+	import org.zkoss.zk.ui.Component;
+	import org.zkoss.zk.ui.event.Event;
+	import org.zkoss.zk.ui.event.EventListener;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	
+	class MyCtrl extends GenericForwardComposer {
+		Treeitem treeitem;
+		
+		public void doAfterCompose(Component comp) throws Exception {
+			super.doAfterCompose(comp);
+			
+			// If comment out onRightClick event listener, tree's context menu works
+			treeitem.addEventListener("onRightClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					treeitem.setLabel("onRightClick");
+				}
+			});
+		}
+	}
+	]]></zscript>
+	<div apply="MyCtrl">
+		<menupopup id="contextMenu">
+			<menuitem label="Item 1" />
+			<menuitem label="Item 2" />
+		</menupopup>
+		<tree context="contextMenu">
+			<treechildren>
+				<treeitem id="treeitem">
+					<treerow>
+						<treecell label="Item 1" />
+					</treerow>
+				</treeitem>
+			</treechildren>
+		</tree>
+	</div>
+</zk>
