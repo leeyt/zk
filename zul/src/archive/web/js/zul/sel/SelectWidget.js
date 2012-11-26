@@ -440,7 +440,7 @@ zul.sel.SelectWidget = zk.$extends(zul.mesh.MeshWidget, {
 
 		if (nRows) {
 			if (!hgh) {
-				if (!nVisiRows) hgh = this._headHgh(20) * nRows;
+				if (!nVisiRows) hgh = this._headHgh(20, true) * nRows;
 				else if (nRows <= nVisiRows) {
 					var $midVisiRow = zk(midVisiRow);
 					hgh = $midVisiRow.offsetTop() + $midVisiRow.offsetHeight();
@@ -537,9 +537,11 @@ zul.sel.SelectWidget = zk.$extends(zul.mesh.MeshWidget, {
 		} else
 			return this.getRows() || this._visiRows || 0;
 	},
-	/* Height of the head row. If now header, defval is returned. */
-	_headHgh: function (defVal) {
-		var hgh = this.ehead ? this.ehead.offsetHeight : 0;
+	/* Height of the head row. If no header, defval is returned. */
+	_headHgh: function (defVal, isExcludeAuxhead) {
+		var headWidget = this.getHeadWidget(), //Bug ZK-1297: get head height exclude auxhead
+			head = this.ehead,
+			hgh = isExcludeAuxhead ? (headWidget ? headWidget.$n().offsetHeight : 0) : (head ? head.offsetHeight : 0);
 		if (this.paging) {
 			var pgit = this.$n('pgit'),
 				pgib = this.$n('pgib');
@@ -769,7 +771,7 @@ zul.sel.SelectWidget = zk.$extends(zul.mesh.MeshWidget, {
 			if (this._multiple) {
 				if (evt.data.shiftKey)
 					this._selectUpto(row, evt, skipFocus);
-				else if (evt.data.ctrlKey || evt.data.metaKey)
+				else if (evt.data.ctrlKey || evt.data.metaKey || zk.mobile) //let multiple selection without checkmark work on tablet
 					this._toggleSelect(row, !row.isSelected(), evt, skipFocus);
 				else if (!alwaysSelect || !row.isSelected())// Bug: 1973470
 					this._select(row, evt, skipFocus);
@@ -953,8 +955,11 @@ zul.sel.SelectWidget = zk.$extends(zul.mesh.MeshWidget, {
 	_doRight: zk.$void,
 	/* maintain the offset of the focus proxy*/
 	_syncFocus: function (row) {
-		var focusEl = this.$n('a'),
-			focusElStyle = focusEl.style,
+		var focusEl = this.$n('a');
+		if (!focusEl) //Bug ZK-1480: widget may not rendered when ROD enabled
+			return;
+		
+		var focusElStyle = focusEl.style,
 			oldTop = this._anchorTop,
 			oldLeft = this._anchorLeft,
 			offs, n;

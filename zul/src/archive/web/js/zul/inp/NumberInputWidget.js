@@ -80,14 +80,23 @@ zul.inp.NumberInputWidget = zk.$extends(zul.inp.FormatWidget, {
 		return this._allowKeys || _allowKeys;
 	},
 	doKeyPress_: function(evt){
+		//Bug ZK-1373: ALTGR + 3 key in Spanish keyboard is a combination of Ctrl + Alt + 3 for £á sign.
+		if (evt.ctrlKey && evt.altKey)
+			evt.stop();
 		if (!this._shallIgnore(evt, this.getAllowedKeys_()))
 			this.$supers('doKeyPress_', arguments);
 	},
 	getType: function () {
-		var type = this._type;
-		if (zk.mobile && !this.getFormat() && !this.$instanceof(zul.inp.Decimalbox))
-			type = 'number';
-		return type;
+		return zk.mobile ? 'number' : this._type;
 	}
 });
+})();
+
+(function () { // disable format for number input element on tablet
+if (zk.mobile) {
+	var _xFormatWidget = {};
+	zk.override(zul.inp.NumberInputWidget.prototype, _xFormatWidget, {
+		setFormat: zk.$void
+	});
+}
 })();

@@ -256,6 +256,11 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		}
 	}
 	function _bkRange(wgt) {
+		if (zk.ie && zk.cfrg) { //Bug ZK-1377
+			var cfrg = zk.cfrg;
+			delete zk.cfrg;
+			return cfrg;
+		}
 		return wgt.getInputNode && (wgt = wgt.getInputNode())
 			&& zk(wgt).getSelectionRange();
 	}
@@ -449,6 +454,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			delete wgt._z$rd;
 			wgt._norenderdefer = true;
 			wgt.replaceHTML('#' + wgt.uuid, wgt.parent ? wgt.parent.desktop: null, null, true);
+			if (wgt.parent)
+				wgt.parent.onChildRenderDefer_(wgt);
 		}
 	}
 
@@ -475,10 +482,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			wgt.rerender(-1);
 		}
 	}
-	function _rerenderDone(wgt) {
+	function _rerenderDone(wgt, skipper /* Bug ZK-1463 */) {
 		for (var j = _rdque.length; j--;)
-			if (zUtl.isAncestor(wgt, _rdque[j]))
-				_rdque.splice(j, 1);
+			if (zUtl.isAncestor(wgt, _rdque[j])) {
+				if (!skipper || !skipper.skipped(wgt, _rdque[j]))
+					_rdque.splice(j, 1);
+			}
 	}
 
 	function _markCache(cache, visited, visible) {
@@ -1868,6 +1877,13 @@ wgt.$f().main.setTitle("foo");
 	 */
 	onChildVisible_: function () {
 	},
+	/** A callback called after a child has been delay rendered.
+	 * @param zk.Widget child the child being rendered
+	 * @see #deferRedraw_
+	 * @since 6.5.1
+	 */
+	onChildRenderDefer_: function (/*child*/) {
+	},
 	/** Makes this widget as topmost.
 	 * <p>If this widget is not floating, this method will look for its ancestors for the first ancestor who is floating. In other words, this method makes the floating containing this widget as topmost.
 	 * To make a widget floating, use {@link #setFloating_}.
@@ -2370,8 +2386,10 @@ function () {
 			this.bind(desktop, skipper);
 		}
 
-		if (!skipper)
+		if (!skipper) {
+			window._onsizet = jq.now();
 			zUtl.fireSized(this);
+		}
 
 		_rsFocus(cfi);
 		return this;
@@ -2398,7 +2416,17 @@ function () {
 	 * @return String the HTML fragment
 	 */
 	redrawHTML_: function (skipper, trim) {
-		var out = [];
+		var out = zk.chrome ? new (function() {
+				var result = "";
+				this.push = function () {
+					for (var i = 0, j = arguments.length; i<j;i++)
+						if (arguments[i]) //skip null or undefined arguments
+							result += arguments[i];
+				};
+				this.join = function () {
+					return result;
+				};
+			}) : [];
 		this.redraw(out, skipper);
 		out = out.join('');
 		return trim ? out.trim(): out;
@@ -2701,7 +2729,7 @@ function () {
 	bind: function (desktop, skipper) {
 		this._binding = true;
 
-		_rerenderDone(this); //cancel pending async rerender
+		_rerenderDone(this, skipper); //cancel pending async rerender
 		if (this.z_rod) 
 			_bindrod(this);
 		else {
@@ -2730,7 +2758,7 @@ function () {
 	 * @return zk.Widget this widget
 	 */
 	unbind: function (skipper) {
-		_rerenderDone(this); //cancel pending async rerender
+		_rerenderDone(this, skipper); //cancel pending async rerender
 		if (this.z_rod)
 			_unbindrod(this);
 		else {
@@ -2791,8 +2819,16 @@ bind_: function (desktop, skipper, after) {
 					self.fire('onBind');
 			});
 		}
-		this.bindSwipe_();
-		this.bindDoubleTap_();
+		var self = this;
+		if (zk.mobile) {
+			after.push(function (){
+				setTimeout(function () {// lazy init
+					self.bindSwipe_();
+					self.bindDoubleTap_();
+					self.bindTapHold_();
+				}, 300);
+			});
+		}
 	},
 	/** Binds the children of this widget.
 	 * It is called by {@link #bind_} to invoke child's {@link #bind_} one-by-one.
@@ -2846,6 +2882,7 @@ unbind_: function (skipper, after) {
 		this.cleanDrag_(); //ok to invoke even if not init
 		this.unbindSwipe_();
 		this.unbindDoubleTap_();
+		this.unbindTapHold_();
 
 		if (this.isListen('onUnbind')) {
 			var self = this;
@@ -2898,7 +2935,7 @@ unbind_: function (skipper, after) {
 		if (sz.height !== undefined) {
 			if (sz.height == 'auto')
 				n.style.height = '';
-			else if (sz.height != '' || sz.height === 0) //bug #2943174, #2979776, ZK-1159
+			else if (sz.height != '' || (sz.height === 0 && !this.isFloating_())) //bug #2943174, #2979776, ZK-1159, ZK-1358
 				this.setFlexSizeH_(n, zkn, sz.height, isFlexMin);
 			else
 				n.style.height = this._height || '';
@@ -2906,7 +2943,7 @@ unbind_: function (skipper, after) {
 		if (sz.width !== undefined) {
 			if (sz.width == 'auto')
 				n.style.width = '';
-			else if (sz.width != '' || sz.width === 0) //bug #2943174, #2979776, ZK-1159
+			else if (sz.width != '' || (sz.width === 0 && !this.isFloating_())) //bug #2943174, #2979776, ZK-1159, ZK-1358
 				this.setFlexSizeW_(n, zkn, sz.width, isFlexMin);
 			else
 				n.style.width = this._width || '';
@@ -3170,90 +3207,42 @@ unbind_: function (skipper, after) {
 	 * @see #doSwipe_
 	 * @since 6.5.0
 	 */
-	bindSwipe_: zk.mobile ? function () {
-		var node = this.$n();
-		if (this.isListen('onSwipe') || jq(node).data('swipeable'))
-			this._swipe = new zk.Swipe(this, node);
-	} : zk.$void,
+	bindSwipe_: zk.$void,
 	/** Unbind swipe event to the widget on tablet device.
 	 * It is called if swipe event is unbound.
 	 * <p>You rarely need to override this method, unless you want to unbind swipe event differently.
 	 * @see #doSwipe_
 	 * @since 6.5.0
 	 */
-	unbindSwipe_: zk.mobile ? function () {
-		var swipe = this._swipe;
-		if (swipe) {
-			this._swipe = null;
-			swipe.destroy(this.$n());
-		}
-	} : zk.$void,
+	unbindSwipe_: zk.$void,
 	/** Bind double click event to the widget on tablet device.
 	 * It is called if the widget is listen to onDoubleClick event.
 	 * <p>You rarely need to override this method, unless you want to implement double click behavior differently.
 	 * @see #doDoubleClick_
 	 * @since 6.5.0
 	 */
-	bindDoubleTap_: zk.mobile ? function () {
-		if (this.isListen('onDoubleClick')) {
-			var doubleClickTime = 500;
-			this._startTap = function (wgt) {
-				wgt._lastTap = wgt.$n();  //Holds last tapped element (so we can compare for double tap)
-				wgt._tapValid = true;     //Are we still in the .5 second window where a double tap can occur
-				wgt._tapTimeout = setTimeout(function() {
-					wgt._tapValid = false;
-				}, doubleClickTime);
-			};
-			jq(this.$n()).bind('touchstart', this.proxy(this._dblTapStart))
-				.bind('touchend', this.proxy(this._dblTapEnd));
-		}
-	} : zk.$void,
+	bindDoubleTap_: zk.$void,
 	/** Unbind double click event to the widget on tablet device.
 	 * It is called if the widget is listen to onDoubleClick event.
 	 * <p>You rarely need to override this method, unless you want to implement double click behavior differently.
 	 * @see #doDoubleClick_
 	 * @since 6.5.0
 	 */
-	unbindDoubleTap_: zk.mobile ? function () {
-		if (this.isListen('onDoubleClick')) {
-			this._startTap = null;
-			jq(this.$n()).unbind('touchstart', this.proxy(this._dblTapStart))
-				.unbind('touchend', this.proxy(this._dblTapEnd));
-		}
-	} : zk.$void,
-	_dblTapStart: zk.mobile ? function(evt) {
-		var tevt = evt.originalEvent;
-		if (tevt.touches.length > 1) return;
-		var	changedTouch = tevt.changedTouches[0];
-		if (!this._tapValid) {
-			this._startTap(this);
-		} else {
-			clearTimeout(this._tapTimeout);
-			this._tapTimeout = null;
-			if (this.$n() == this._lastTap) {
-				this._dbTap = true;
-			} else {
-				this._startTap(this);
-			}
-		}
-		tevt.stopPropagation();
-	} : zk.$void,
-	_dblTapEnd: zk.mobile ? function(evt) {
-		var tevt = evt.originalEvent;
-		if (tevt.touches.length > 1) return;
-		if (this._dbTap) {
-			this._dbTap = this._tapValid = this._lastTap = null;
-			var wevt = new zk.Event(this, 'onDoubleClick', {pageX: tevt.pageX, pageY: tevt.pageY}, {}, evt);
-			if (!this.$weave) {
-				if (!wevt.stopped) {
-					this['doDoubleClick_'].call(this, wevt);
-				}
-				if (wevt.domStopped)
-					wevt.domEvent.stop();
-			}
-			tevt.preventDefault(); //stop ios zoom
-		}
-	} : zk.$void,
+	unbindDoubleTap_: zk.$void,
+	/** Bind right click event to the widget on tablet device.
+	 * It is called if the widget is listen to onRightClick event.
+	 * <p>You rarely need to override this method, unless you want to implement right click behavior differently.
+	 * @see #doRightClick_
+	 * @since 6.5.1
+	 */
+	bindTapHold_: zk.$void,
+	/** Unbind right click event to the widget on tablet device.
+	 * It is called if the widget is listen to onRightClick event.
+	 * <p>You rarely need to override this method, unless you want to implement right click behavior differently.
+	 * @see #doRightClick_
+	 * @since 6.5.1
+	 */
+	unbindTapHold_: zk.$void,
 	/** Sets the focus to this widget.
 	 * This method will check if this widget can be activated by invoking {@link #canActivate} first.
 	 * <p>Notice: don't override this method. Rather, override {@link #focus_},
@@ -3592,14 +3581,16 @@ wgt.unlisten({
 	isListen: function (evt, opts) {
 		var v = this._asaps[evt];
 		if (v) return true;
-		if (opts && opts.asapOnly) {
-			v = this.$class._importantEvts;
-			return v && v[evt];
-		}
-		if (opts && opts.any) {
-			if (v != null) return true;
-			v = this.$class._importantEvts;
-			if (v && v[evt] != null) return true;
+		if (opts) {
+			if (opts.asapOnly) {
+				v = this.$class._importantEvts;
+				return v && v[evt];
+			}
+			if (opts.any) {
+				if (v != null) return true;
+				v = this.$class._importantEvts;
+				if (v && v[evt] != null) return true;
+			}
 		}
 
 		var lsns = this._lsns[evt];
@@ -4425,7 +4416,7 @@ _doFooSelect: function (evt) {
 	},
 
 	//uuid//
-	/** Converts Converts an ID of a DOM element to UUID.
+	/** Converts an ID of a DOM element to UUID.
 	 * It actually removes '-*'. For example, zk.Widget.uuid('z_aa-box') returns 'z_aa'. 
 	 * @param String subId the ID of a DOM element
 	 * @return String the uuid of the widget (notice that the widget might not exist)
@@ -4815,13 +4806,14 @@ zk.Page = zk.$extends(zk.Widget, {
 	 * of all child widgets.
 	 * @param Array out an array of HTML fragments.
 	 */
-	redraw: function (out) {
+	redraw: _zkf = function (out) {
 		out.push('<div', this.domAttrs_(), '>');
 		for (var w = this.firstChild; w; w = w.nextSibling)
 			w.redraw(out);
 		out.push('</div>');
 	}
 },{
+	$redraw: _zkf,
 	/** An array of contained pages (i.e., a standalone ZK page but included by other technology).
 	 * For example, a ZUL age that is included by a JSP page.
 	 * A contained page usually covers a portion of the browser window. 
@@ -4865,7 +4857,7 @@ zk.Native = zk.$extends(zk.Widget, {
 		return !subId && this.id ? jq('#' + this.id):
 			this.$supers('$n', arguments); // Bug ZK-606/607
 	},
-	redraw: function (out) {
+	redraw: _zkf = function (out) {
 		var s = this.prolog, p;
 		if (s) {
 			//Bug ZK-606/607: hflex/vflex and many components need to know
@@ -4902,6 +4894,8 @@ zk.Native = zk.$extends(zk.Widget, {
 		s = this.epilog;
 		if (s) out.push(s);
 	}
+}, {
+	$redraw: _zkf
 });
 
 /** A macro widget.
@@ -4944,7 +4938,8 @@ zk.Macro = zk.$extends(zk.Widget, {
 	 * @param Array out an array of HTML fragments (String).
 	 */
 	redraw: function (out) {
-		out.push('<', this._enclosingTag, this.domAttrs_(), '>');
+		var style = ' style="display: inline-block; min-width: 1px;"';
+		out.push('<', this._enclosingTag, this.domAttrs_(), style, '>'); //Bug ZK-1433: add style to pass isWatchable_
 		for (var w = this.firstChild; w; w = w.nextSibling)
 			w.redraw(out);
 		out.push('</', this._enclosingTag, '>');
@@ -5020,8 +5015,18 @@ Object skip(zk.Widget wgt);
 	skip: function (wgt, skipId) {
 		var skip = jq(skipId || wgt.getCaveNode(), zk)[0];
 		if (skip && skip.firstChild) {
+			var cf = zk.currentFocus,
+				iscf = cf && cf.getInputNode;
+			
+			if (iscf && zk.ie) //Bug ZK-1377 IE will lost input selection range after remove node
+				zk.cfrg = zk(cf.getInputNode()).getSelectionRange();
+			
 			skip.parentNode.removeChild(skip);
 				//don't use jq to remove, since it unlisten events
+			
+			if (iscf && zk.chrome) //Bug ZK-1377 chrome will lost focus target after remove node
+				zk.currentFocus = cf;
+			
 			return skip;
 		}
 	},

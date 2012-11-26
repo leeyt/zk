@@ -46,7 +46,6 @@ it will be useful, but WITHOUT ANY WARRANTY.
  * @since 5.0.6
  */
 zul.inp.Doublespinner = zk.$extends(zul.inp.NumberInputWidget, {
-	_value: 0,
 	_step: 1,
 	_buttonVisible: true,
 	$define: {
@@ -153,8 +152,11 @@ zul.inp.Doublespinner = zk.$extends(zul.inp.NumberInputWidget, {
     				valstr += '0';
     		}
     
-    		if (isNaN(val) || (raw != valstr && raw != '-'+valstr && raw.indexOf('e') < 0)) //1e2: assumes OK
+    		if (isNaN(val) || (raw != valstr && raw != '-'+valstr && raw.indexOf('e') < 0)) { //1e2: assumes OK
+    			if (!isNaN(val) && raw != valstr) //Bug ZK-1218: show Illegal value instead if input is number but too long
+					return {error: zk.fmt.Text.format(msgzul.ILLEGAL_VALUE)};
     			return {error: zk.fmt.Text.format(msgzul.NUMBER_REQUIRED, value)};
+    		}
     	}
     
     	if (info.divscale) val = val / Math.pow(10, info.divscale);

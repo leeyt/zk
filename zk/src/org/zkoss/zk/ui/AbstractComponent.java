@@ -86,6 +86,7 @@ import org.zkoss.zk.ui.sys.JsContentRenderer;
 import org.zkoss.zk.ui.sys.Names;
 import org.zkoss.zk.ui.sys.PropertiesRenderer;
 import org.zkoss.zk.ui.sys.StubsComponent;
+import org.zkoss.zk.ui.sys.StubComponent;
 import org.zkoss.zk.ui.sys.UiEngine;
 import org.zkoss.zk.ui.sys.WebAppCtrl;
 import org.zkoss.zk.ui.util.ComponentActivationListener;
@@ -450,7 +451,8 @@ implements Component, ComponentCtrl, java.io.Serializable {
 		if (_page != null) {
 			if (bRoot) ((AbstractPage)_page).removeRoot(this);
 			if (page == null
-			&& ((DesktopCtrl)_page.getDesktop()).removeComponent(this, true))
+			&& ((DesktopCtrl)_page.getDesktop()).removeComponent(this, true)
+			&& !(this instanceof StubComponent)) //Bug ZK-1452: don't need to reset StubComponent's uuid
 				resetUuid = true; //recycled (so reset it -- refer to DesktopImpl for reason)
 		}
 
@@ -483,17 +485,13 @@ implements Component, ComponentCtrl, java.io.Serializable {
  	}
 
 	private String nextUuid(Desktop desktop) {
-		Set<String> gened = null;
-		for (;;) {
+		for (int count = 0;;) {
 			String uuid = ((DesktopCtrl)desktop).getNextUuid(this);
 			if (desktop.getComponentByUuidIfAny(uuid) == null)
 				return uuid;
 
-			if (gened == null)
-				gened = new HashSet<String>();
-			if (!gened.add(uuid))
-				throw new UiException("UUID, "+uuid+", was generated repeatedly (cycle: "+gened.size()
-					+"), and still replicates with existent components. Please have a better ID generator.");
+			if (++count > 10000)
+				throw new UiException("It took too much time to look for unique UUID. Please check the implementation of IdGenerator.");
 		}
 	}
 	public String getId() {
@@ -2115,6 +2113,7 @@ w:use="foo.MyWindow"&gt;
 		final Desktop desktop;
 		if (!found && (desktop = getDesktop()) != null) {
 			if (Events.ON_CLIENT_INFO.equals(evtnm)) {
+				desktop.setAttribute("org.zkoss.desktop.clientinfo.enabled", true);
 				response(new AuClientInfo(desktop));
 			} else if (Events.ON_PIGGYBACK.equals(evtnm)) {
 				((DesktopCtrl)desktop).onPiggybackListened(this, true);
@@ -2363,10 +2362,12 @@ w:use="foo.MyWindow"&gt;
 	}
 	private void onListenerChange(Desktop desktop, boolean listen) {
 		if (listen) {
-			if (Events.isListened(this, Events.ON_CLIENT_INFO, false)) //asap+deferrable
+			if (Events.isListened(this, Events.ON_CLIENT_INFO, false)) {//asap+deferrable
 				response(new AuClientInfo(desktop));
+				getDesktop().setAttribute("org.zkoss.desktop.clientinfo.enabled", true);
 				//We always fire event not a root, since we don't like to
 				//check when setParent or setPage is called
+			}
 			if (Events.isListened(this, Events.ON_PIGGYBACK, false))
 				((DesktopCtrl)desktop).onPiggybackListened(this, true);
 		} else {
@@ -2543,9 +2544,10 @@ w:use="foo.MyWindow"&gt;
 	 * @param c a collection of objects. Ignored if null.
 	 * @since 3.6.4
 	 */
+	@SuppressWarnings("unchecked")
 	protected void willPassivate(Collection<?> c) {
 		if (c != null)
-			for (Iterator it = c.iterator(); it.hasNext();)
+			for (Iterator it = new ArrayList(c).iterator(); it.hasNext();)
 				willPassivate(it.next());
 	}
 	/** Utility to invoke {@link ComponentActivationListener#willPassivate}
@@ -2563,9 +2565,10 @@ w:use="foo.MyWindow"&gt;
 	 * @param c a collection of objects. Ignored if null.
 	 * @since 3.6.4
 	 */
+	@SuppressWarnings("unchecked")
 	protected void didActivate(Collection<?> c) {
 		if (c != null)
-			for (Iterator it = c.iterator(); it.hasNext();)
+			for (Iterator it = new ArrayList(c).iterator(); it.hasNext();)
 				didActivate(it.next());
 	}
 	/** Utility to invoke {@link ComponentActivationListener#didActivate}

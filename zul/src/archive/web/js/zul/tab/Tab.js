@@ -132,7 +132,11 @@ zul.tab.Tab = zk.$extends(zul.LabelImageWidget, {
 	},
 	_sel: function(notify, init) {
 		var tabbox = this.getTabbox();
-		if (!tabbox) return;
+		
+		/* ZK-1441
+		 * If tabbox is animating (end-user click different tabs quickly), ignore this action.
+		 */
+		if (!tabbox || tabbox._animating) return;
 
 		var	tabs = this.parent,
 			oldtab = tabbox._selTab;
@@ -217,7 +221,10 @@ zul.tab.Tab = zk.$extends(zul.LabelImageWidget, {
 	domClass_: function (no) {
 		var scls = this.$supers('domClass_', arguments);
 		if (!no || !no.zclass) {
-			var added = this.isDisabled() ? this.getZclass() + '-disd' : '';
+			var zcls = this.getZclass(),
+				added = this.isDisabled() ? zcls + '-disd' : '';
+			if (this.isSelected())
+				added += ' ' + zcls + '-seld';
 			if (added) scls += (scls ? ' ': '') + added;
 		}
 		return scls;
@@ -242,7 +249,7 @@ zul.tab.Tab = zk.$extends(zul.LabelImageWidget, {
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zul.tab.Tab, 'bind_', arguments);
-		var closebtn = this.$n('close'),
+		var closebtn = this.isClosable() ? this.$n('close') : null,
 			tab = this;
 		if (closebtn) {
 			this.domListen_(closebtn, "onClick", '_doCloseClick');
@@ -251,10 +258,11 @@ zul.tab.Tab = zk.$extends(zul.LabelImageWidget, {
 					.domListen_(closebtn, "onMouseOut", '_toggleBtnOver');
 		}
 
-		after.push(function () {tab.parent._fixHgh();});
+		after.push(function () {
+			tab.parent._fixHgh();
 			//Bug 3022274: required so it is is called before, say, panel's slideDown
 			//_sel will invoke _fixWidth but it is too late since it uses afterMount
-		after.push(function () {
+			
 			zk.afterMount(function () {
 				if (tab.isSelected()) {
 					if (tab.getTabbox().inAccordionMold()) {

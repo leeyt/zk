@@ -291,6 +291,7 @@ tr.z-row .z-cell {
 	line-height: 18px;
 }
 tr.z-row td.z-row-inner,
+tr.z-row td.z-cell,
 tr.z-group td.z-group-inner,
 tr.z-groupfoot td.z-groupfoot-inner {
 	padding: 4px 4px 4px 6px;
@@ -312,11 +313,25 @@ tr.z-grid-odd {
 	background: #F7F7F7;
 }
 
+<%-- Bug ZK-1234: Nested grids does not properly display alternating odd/even rows --%>
+tr.z-grid-odd tr:not(.z-grid-odd) td.z-row-inner {
+	background-color: #FFF;
+}
+
+<c:if test="${zk.ie > 0 || zk.opera > 0}">
+tr.z-grid-odd tr.z-grid-odd td.z-row-inner {
+	background-color: #F7F7F7;
+}
+
+tr.z-grid-odd tr.z-row td.z-row-inner {
+	background-color: #FFF;
+}
+</c:if>
+
 tr.z-row-over > td.z-row-inner {
 	border-top: 1px solid #e3f2ff;
 	border-bottom: 1px solid #e3f2ff;
 }
-
 
 tr.z-row-over > td.z-row-inner, tr.z-row-over > .z-cell {
 	background-image: url(${c:encodeThemeURL('~./zul/img/grid/column-over.png')});

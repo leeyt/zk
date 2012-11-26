@@ -1,6 +1,107 @@
   --------
-ZK 6.5.0
+ZK 6.5.1
+* Features
+  ZK-1351: Messagebox with no button
+  ZK-1397: DefaultTreeNode support empty children mean leaf node
+  ZK-1248: Sub menu should not overlap its parent in menupopup
+  ZK-1416: Support default Command and GlobalCommand handling
+  ZK-1465: Comet server push support HTML5 page-visibility API to reduce the server loading
+  ZK-1474: Add onVisibilityChange event based on HTML5 page-visibility API
 
+* Bugs
+  ZK-1348: First child tree node can't unfold sometimes
+  ZK-1350: Listbox multiple choice demo example does not work
+  ZK-1356: Spinner doesn't update it's value in ipad
+  ZK-1357: Popupmenu doesn't show up when listening to onClick
+  ZK-1341: Datebox in zh_TW locale with 'Long + Medium' format failed to assign correct value
+  ZK-1353: Datebox not work in Hebrew
+  ZK-1347: Including Checkbox inside MVVM Form causes Error writing 'checked' on type org.zkoss.zul.Checkbox crash
+  ZK-1344: Collection binding will occur error when deleting entry
+  ZK-1366: When binding Radio's "selectedItem" with a non-String object, zk throws ClassCastException
+  ZK-1358: When I try to show a window with doOverlapped, doModal or doHighlighted my window don't appears
+  ZK-1372: zk.stackUp not work with Firefox
+  ZK-1368: the right edge of the textboxes split over to a new line when you specify a percentage width and set the mold to rounded
+  ZK-1383: The value of Map.Entry returned from ListModelMap.getElementAt() don't support Serializable
+  ZK-1259: zul with hashmap not load key from a fx
+  ZK-1380: Forward uri can't be "zk/*" on Tomcat 7
+  ZK-1381: Show busy on panel with borderlayout is not working
+  ZK-1337: RenderHttpServletRequest/RenderHttpServletResponse's getInstance() cause ServletException when passed to RequestDispather on Liferay 6.1 + JBoss 7.1
+  ZK-1377: Focus lost when tapping & change title value insides a window
+  ZK-1386: Server failed to load scrollview.css.dsp while using zk6.5 ee and setting theme to sapphire
+  ZK-1406: BorderLayout IPad2 rotating, North area size
+  ZK-1391: When a window is invisible at first, its top (or left) attribute takes no effect even we turn the window to be visible.
+  ZK-1403: Combobutton has a missing image icon when displayed on tablets
+  ZK-1400: Focus issue when Listbox in select mold after invalidate
+  ZK-1192: SelectorComposer ConcurrentModificationException in GAE
+  ZK-1420: Textbox can't be load on android 2.x
+  ZK-1424: Treeitem with a lot of childrens takes too long to open
+  ZK-1418: Selectbox: Changing selection after changing a new model
+  ZK-1425: Setting visible false on Listheader doesn't hide corresponding listfooter
+  ZK-1419: Constraint hover text is confusing
+  ZK-1433: InputElement width not set when component is built by macro
+  ZK-1407: Combobox focus style is lost after item selection
+  ZK-1349: If Cell style is specified, it overrides any previous component style setting
+  ZK-1427: Toolbarbutton with autodisable active upload function not work at second click
+  ZK-1428: Wrong order for item removed from ListModelList model
+  ZK-1430: Listbox in Bandpopup of a Bandbox is not size correctly - "rows" is ignored.
+  ZK-1370: org.zkoss.zul.Datebox.setDisplayedTimeZones(List dtzones) NPE if emptied
+  ZK-1437: javascript error when use include with auto mode
+  ZK-1442: ZK Bind command doesn't work with cluster env
+  ZK-1446: get NotSerializableException when using @Subscribe in tomcat cluster env.
+  ZK-1374: Unclosed BufferedReader for org.zkoss.util.media.ContentTypes
+  ZK-1441: Accordion Tabbox after rapid clicking on tabs start displaying content at fixed wrong hight.
+  ZK-1434: When use native tag to render row's cells, it doesn't works fine with zkmax.jar
+  ZK-1354: ZK generated page cannot pass W3C validator while checking as XHTML 1.0 Transitional
+  ZK-1448: Scrollable Menubar does not show left/right arrows on mobile devices
+  ZK-1454: Scrollbar forgets its position when switching tabs in Tabbox
+  ZK-1297: Listbox has wrong height when using "rows" and auxhead
+  ZK-1324: Trendy buttons inside bandbox popup does not lose focus when popup is closed (FF and Opera only)
+  ZK-1295: Disabled buttons cannot regain focus by re-enabling and then setting focus
+  ZK-1458: Right click on iPad does not work if there are both double click event handler and right click event handler
+  ZK-1373: Doublebox should not allow the typing of non-numeric characteres achieved by alt-combinations such as @ and #
+  ZK-1284: Scrolling on grid/listbox header could cause column heading/body to misalign
+  ZK-1257: Filedownload.save(media, filename) does not save the media as the specified filename
+  ZK-1308: WireVariable does not wire a superclass field if a field with the same name is declared in a subclass
+  ZK-1452: Unknown stub error
+  ZK-1150: nbsp gets added to menuitem label in Firefox
+  ZK-1217: Groupbox calculate a wrong hight after the groupbox be hide then show
+  ZK-1117: some wrong behavior in spinner and double spinner
+  ZK-1234: Nested grids does not properly display alternating odd/even rows
+  ZK-1187: Setting an sClass on a selected tab results in tab losing z-tab-seld class
+  ZK-1463: Button is disabled and clickable if windows is from visible=false to true
+  ZK-1464: Console has Exception log when change src of include if bind to a textbox
+  ZK-1213: Calendar and datebox showing the wrong day number
+  ZK-1220: Instant textbox doesn't preserve the focus at position
+  ZK-1467: Resizable panels inside portallayout loses resizability after move
+  ZK-1462: Portalchildren and Renderdeferer cause a Javascript error
+  ZK-1469: argument type mismatch when try to get @ScopeParam with @ref value
+  ZK-1218: Doublebox says "not a number" when significant length extends beyond 15
+  ZK-978: dynamic hflex on listboxes doesn't work
+  ZK-1468: Value doesn't be reload if it binds to @ref and in include
+  ZK-1309: Modal window loses it's modality in certain situation
+  ZK-1472: Cannot bind to include arg
+  ZK-1438: Composer doesn't be released when using @Subscribe
+  ZK-1345: ZK MessageLoader doesn't load customize MessageLoader
+  ZK-1215: Mouseless selection not working properly in datebox and calendar
+  ZK-1480: zkmax bandbox issue
+
+* Upgrade Notes
+  + Decouple Flashchart component from zul.jar to flashchart.jar, due to Flashchart contains a potential
+   SWF vulnerability in YUI 2 that the SWF files in question contain a cross-site JavaScript injection
+   vulnerability which allows for the execution of arbitrary third-party code within the domain from which
+   the files are served. Please download the flashchart.jar from the link instead - https://github.com/zkoss/flashchart
+  + To support this feature ZK-1465 for reducing server loading, the comet server push will enable the smart connection setting
+  by default, if you want to disable it as the previous version, please specify the following setting in the zk.xml.
+   <library-property>
+    <name>org.zkoss.zkex.ui.comet.smartconnection.disabled</name>
+    <value>true</value>
+  </library-property>
+  Note: the smart connection is based on HTML5's page-visibility API, which is described - http://www.w3.org/TR/page-visibility/
+  and it can only support on HTML5 browsers.
+
+  --------
+ZK 6.5.0
+Sep 12, 2012
 * Features
   ZK-447: The file upload allows users to drag and drop local files (HTML5)
   ZK-1241: ZK Client Widget support swipe event for tablet/mobile device
@@ -25,13 +126,14 @@ ZK 6.5.0
   ZK-1283: Grid/List/Tree support changing page by swipe event on tablet device
   ZK-1272: Scrollview component for tablet device
   ZK-1269: Need layout that allow user change view like change card
-  ZK-1305: Scroll on Ipad if Element is draggable
 
 * Bugs
   ZK-1285: Modal window position issue with virtual keyboard on ipad
   ZK-1313: combobox dropdown changes document scroll height on iPad
   ZK-1314: input component focus in modal window causes virtual keyboard to show up and down on iPad
   ZK-1315: grid column doesn't reappear if columns menupopup set to auto and grid is sizedByContent
+  ZK-1305: Scroll on Ipad if Element is draggable
+  ZK-1289: Servlets.browser() causes null exception on Viewpad
 
 * Upgrade Notes
   + Rename the "tbbtn" mold of chosenbox to "toolbar"
@@ -56,6 +158,12 @@ ZK 6.5.0
   + Unsupported attribute for Tablet devices:
     *. Combobox's autodrop attribute
     *. Menubar's autodrop attribute
+	*. Intbox's format attribute
+	*. Doublebox's format attribute
+	*. Spinner's format attribute
+	*. Doublespinner's format attribute
+	*. Longbox's format attribute
+	*. Decimalbox's format attribute
   + Change Checkbox#setValue(String) to Checkbox#setValue(Object)
 
   --------
@@ -63,6 +171,9 @@ ZK 6.0.3
 * Features
   ZK-1301: The buttons in the Messagebox shall use autodisable
   ZK-1312: formattedNumber & formattedDate should use proper Locale & Timezone
+  ZK-1397: DefaultTreeNode support empty children mean leaf node
+  ZK-1248: Sub menu should not overlap its parent in menupopup
+  
 * Bugs
   ZK-1128: Use SerializableUiFactory with a portal environment will cause ClassCastException
   ZK-1303: listbox select mold with 1 rows onSelect event not fired for first item
@@ -75,9 +186,38 @@ ZK 6.0.3
   ZK-1276: Combobox does not sync the selected item
   ZK-1208: Clients.scrollIntoView don't work in Chrome browser
   ZK-1268: ZK bind children throw Unsupported child exception
+  ZK-1289: Servlets.browser() causes null exception on Viewpad
+  ZK-1322: Issue on timebox with null value
+  ZK-1313: combobox dropdown changes document scroll height on iPad
+  ZK-1348: First child tree node can't unfold sometimes
+  ZK-1341: Datebox in zh_TW locale with 'Long + Medium' format failed to assign correct value
+  ZK-1353: Datebox not work in Hebrew
+  ZK-1358: When I try to show a window with doOverlapped, doModal or doHighlighted my window don't appears
+  ZK-1347: Including Checkbox inside MVVM Form causes Error writing 'checked' on type org.zkoss.zul.Checkbox crash
+  ZK-1344: Collection binding will occur error when deleting entry
+  ZK-1372: zk.stackUp not work with Firefox
+  ZK-1368: the right edge of the textboxes split over to a new line when you specify a percentage width and set the mold to rounded
+  ZK-1383: The value of Map.Entry returned from ListModelMap.getElementAt() don't support Serializable
+  ZK-1380: Forward uri can't be "zk/*" on Tomcat 7
+  ZK-1259: zul with hashmap not load key from a fx
+  ZK-1381: Show busy on panel with borderlayout is not working
+  ZK-1337: RenderHttpServletRequest/RenderHttpServletResponse's getInstance() cause ServletException when passed to RequestDispather on Liferay 6.1 + JBoss 7.1
+  ZK-1377: Focus lost when tapping & change title value insides a window
+  ZK-1391: When a window is invisible at first, its top (or left) attribute takes no effect even we turn the window to be visible.
+  ZK-1400: Focus issue when Listbox in select mold after invalidate
+  ZK-1192: SelectorComposer ConcurrentModificationException in GAE
+  ZK-1424: Treeitem with a lot of childrens takes too long to open
 
 * Upgrade Notes
   + The default names of a composer will still be assigned no matter you set a composerName by custom-attributes or not.
+  
+  --------
+ZK 6.0.2.1
+* Features
+* Bugs
+  ZK-1338: The page content will be empty when the Javascript takes a long time
+  
+* Upgrade Notes
 
   --------
 ZK 6.0.2
@@ -483,6 +623,7 @@ ZK 5.0.12
 * Features
   ZK-1002: Remove script carrying ZK initialization code after mounted
 
+  
 * Bugs
   ZK-998: Uploading mp3 fails in 5.0.11
   ZK-1011: drag and drop in mobile safari throwing exceptions
@@ -502,6 +643,8 @@ ZK 5.0.12
   ZK-1092: IE 8 - Scrollbar Bug in Tree
   ZK-1230: Listbox with rod only removes the first list item when setItemInvalid
   ZK-1298: Can not set composer name with <custom-attributes>
+  ZK-1391: When a window is invisible at first, its top (or left) attribute takes no effect even we turn the window to be visible.
+  ZK-1400: Focus issue when Listbox in select mold after invalidate
   
 	--------
 ZK 5.0.11

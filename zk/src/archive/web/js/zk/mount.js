@@ -36,7 +36,8 @@ function zkver(ver, build, ctxURI, updURI, modVers, opts) {
 	for (var nm in modVers)
 		zk.setVersion(nm, modVers[nm]);
 
-	zk.feature = {standard: true};
+	if (!zk.feature)
+		zk.feature = {standard: true};
 	zkopt(opts);
 }
 
@@ -184,15 +185,15 @@ function zkamn(pkg, fn) {
 			if (!inf)
 				break; //done
 
-			if (breathe(mtBL)) 
-				return; //mtBL has been scheduled for later execution
-
 			_crInfBL1.push([inf[0], create(inf[3]||inf[0], inf[1], true), inf[2], inf[4]]);
 				//inf[0]: desktop used as default parent if no owner
 				//inf[3]: owner passed from zkx
 				//inf[2]: bindOnly
 				//inf[4]: aucmds (if BL)
 				//true: don't update DOM
+
+			if (breathe(mtBL)) 
+				return; //mtBL has been scheduled for later execution
 		}
 
 		mtBL0();
@@ -214,8 +215,18 @@ function zkamn(pkg, fn) {
 			var wgt = inf[1];
 			if (inf[2])
 				wgt.bind(inf[0]); //bindOnly
-			else
+			else {
+				var $jq;
+				if (zk.processing
+						&& ($jq = jq("#zk_proc")).length) {
+					if ($jq.hasClass('z-loading') && $jq.parent().hasClass('z-temp')) {
+						$jq[0].id = 'zna';
+						if (!jq("#zk_proc").length) //B65-ZK-1431: check if progressbox exists
+							zUtl.progressbox("zk_proc", window.msgzk?msgzk.PLEASE_WAIT:'Processing...', true);
+					}
+				}
 				wgt.replaceHTML('#' + wgt.uuid, inf[0]);
+			}
 
 			doAuCmds(inf[3]); //aucmds
 		}
@@ -230,14 +241,7 @@ function zkamn(pkg, fn) {
 		zk.mounting = false;
 		doAfterMount(mtBL1);
 		_paci && ++_paci.s;
-		if (zk.mobile) {
-			setTimeout(function () {
-			// close it when no ClientInfo event registered,
-			// otherwise the onResponse event will take care that.
-			if (!zAu._cInfoReg)
-				zk.endProcessing();
-			}, 500);
-		} else {
+		if (!zk.clientinfo) {// if existed, the endProcessing() will be invoked after onResponse()
 			zk.endProcessing();
 		}
 
@@ -259,9 +263,6 @@ function zkamn(pkg, fn) {
 			if (!inf)
 				break; //done
 
-			if (breathe(mtAU))
-				return; //mtAU has been scheduled for later execution
-
 			if (filter = inf[4][1]) //inf[4] is extra if AU
 				Widget.$ = function (n, opts) {return filter(_wgt_$(n, opts));}
 			try {
@@ -270,6 +271,9 @@ function zkamn(pkg, fn) {
 				if (filter) Widget.$ = _wgt_$;
 			}
 			inf[4][0](wgt); //invoke stub
+
+			if (breathe(mtAU))
+				return; //mtAU has been scheduled for later execution
 		}
 		mtAU0();
 	}
@@ -353,7 +357,7 @@ function zkamn(pkg, fn) {
 	 */
 	function breathe(fn) {
 		var t = jq.now(), dt = t - _t0;
-		if (!zk.android && dt > 2500) { //huge page (the shorter the longer to load; but no loading icon)
+		if (dt > 2500) { //huge page (the shorter the longer to load; but no loading icon)
 			_t0 = t;
 			dt >>= 6;
 			setTimeout(fn, dt < 10 ? dt: 10); //breathe
@@ -398,10 +402,23 @@ function zkamn(pkg, fn) {
 
 			if (wi) {
 				if (wi[0] === 0) { //page
-					var props = wi[2];
-					zkdt(zk.cut(props, "dt"), zk.cut(props, "cu"), zk.cut(props, "uu"), zk.cut(props, "ru"));
+					var props = wi[2],
+						dt = zkdt(zk.cut(props, "dt"), zk.cut(props, "cu"), zk.cut(props, "uu"), zk.cut(props, "ru"));
 					if (owner = zk.cut(props, "ow"))
 						owner = Widget.$(owner);
+					var zf;
+					if ((zf = zk.feature) && (zf.pe || zf.ee) && zk.clientinfo !== undefined) {
+						zAu.cmd0.clientInfo(dt.uuid);
+						if (extra) {
+							var newExtra = [];
+							for (var j = 0; j < extra.length; j += 2) {
+								if (extra[j] != 'clientInfo')
+									newExtra.push(extra[j], extra[j + 1]);
+							}
+							extra = newExtra;
+						}
+					} else
+						delete zk.clientinfo;
 				}
 
 				infs.push([_curdt(), wi, _mntctx.bindOnly, owner, extra]);
@@ -640,6 +657,10 @@ jq(function() {
 		return !zk.ie || evt.returnValue;
 	})
 	.bind('zmousedown', function(evt){
+		if (zk.mobile) {
+			zk.currentPointer[0] = evt.pageX;
+			zk.currentPointer[1] = evt.pageY;
+		}
 		var wgt = Widget.$(evt, {child:true});
 		_docMouseDown(
 			new zk.Event(wgt, 'onMouseDown', evt.mouseData(), null, evt),
@@ -687,7 +708,7 @@ jq(function() {
 		if (zk.Draggable.ignoreClick()) return;
 		
 		if (zk.android 
-				&& (lastTimestamp && lastTimestamp + 50 < jq.now()) 
+				&& (lastTimestamp && lastTimestamp + 400 > evt.timeStamp) 
 				&& (lastTarget && lastTarget == evt.target)) { //fix android 4.1.1 fire twice or more
 			return;
 		} else {
@@ -712,6 +733,9 @@ jq(function() {
 			if (wevt.domStopped)
 				return false;
 		}
+	})
+	.bind((document.hidden !== undefined ? '' : zk.vendor_) + 'visibilitychange', function (evt) {
+		zAu._onVisibilityChange();
 	});
 
 	zjq.fixOnResize(900); //IE6/7: it sometimes fires an "extra" onResize in loading
@@ -734,7 +758,7 @@ jq(function() {
 		if ((_reszInf.lastTime && now < _reszInf.lastTime) || _reszInf.inResize)
 			return; //ignore resize for a while (since onSize might trigger onsize)
 
-		var delay = zk.ie ? 250: 50;
+		var delay = zk.ie || zk.android ? 250: 50;
 		_reszInf.time = now + delay - 1; //handle it later
 		setTimeout(_docResize, delay);
 

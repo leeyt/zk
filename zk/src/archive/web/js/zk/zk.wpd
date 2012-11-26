@@ -25,6 +25,8 @@ window.$eval=function(s){return eval(s);};
 		-->
 	<script src="ext/jquery.js"/>
 	<script src="zk.js" jsdoc="true"/>
+	<function class="org.zkoss.zul.impl.Utils"
+        signature="java.lang.String outFeature()"/>
 	<script src="js.js"/>
 	<script src="dom.js" jsdoc="true"/>
 	<script src="domie.js" browser="ie"/>
@@ -32,7 +34,6 @@ window.$eval=function(s){return eval(s);};
 	<script src="domgecko.js" browser="gecko"/>
 	<script src="domsafari.js" browser="safari"/>
 	<script src="domopera.js" browser="opera"/>
-	<script src="domtouch.js" browser="ios,android"/>
 
 	<script src="evt.js" jsdoc="true"/>
 	<script src="anima.js" jsdoc="true"/>
@@ -46,7 +47,8 @@ window.$eval=function(s){return eval(s);};
 	<script src="bookmark.js"/>
 	<script src="au.js" jsdoc="true"/>
 	<script src="flex.js"/>
-	<script src="zswipe.js" browser="ios,android"/>
+	<script src="zswipe.js" jsdoc="true" browser="ios,android"/>
+	<script src="domtouch.js" browser="ios,android"/>
 
 	<script src="zkie.js" browser="ie"/>
 

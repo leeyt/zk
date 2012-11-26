@@ -43,6 +43,15 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 	</library-property>
 	-->
 	
+	<!-- F65-ZK 1465 
+		Turn off smart connection for the comet server push.
+		By default is enable and only HTML5 browser support
+	<library-property>
+		<name>org.zkoss.zkex.ui.comet.smartconnection.disabled</name>
+		<value>true</value>
+	</library-property>
+	-->
+	
 	<!--  Bug ZK-692 -->
 	<listener>
 		<listener-class>org.zkoss.zktest.test.MyDesktopCleanup</listener-class>
@@ -109,6 +118,9 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>
 	</language-config>
 	 -->
+	<language-config>
+		<addon-uri>/WEB-INF/ZK-1345.xml</addon-uri>
+	</language-config>
 
 	<!-- Turn on if the processing time is longer than 9000 miliseconds.
 		Default: -1 (turned off)

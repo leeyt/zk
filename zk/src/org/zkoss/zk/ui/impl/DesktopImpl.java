@@ -63,6 +63,7 @@ import org.zkoss.zk.ui.event.ClientInfoEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.VisibilityChangeEvent;
 import org.zkoss.zk.ui.ext.RawId;
 import org.zkoss.zk.ui.ext.ScopeListener;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
@@ -81,6 +82,7 @@ import org.zkoss.zk.ui.sys.RequestQueue;
 import org.zkoss.zk.ui.sys.Scheduler;
 import org.zkoss.zk.ui.sys.ServerPush;
 import org.zkoss.zk.ui.sys.SessionCtrl;
+import org.zkoss.zk.ui.sys.StubComponent;
 import org.zkoss.zk.ui.sys.UiEngine;
 import org.zkoss.zk.ui.sys.Visualizer;
 import org.zkoss.zk.ui.sys.WebAppCtrl;
@@ -541,7 +543,8 @@ public class DesktopImpl implements Desktop, DesktopCtrl, java.io.Serializable {
 	}
 	public boolean removeComponent(Component comp, boolean recycleAllowed) {
 		final String uuid = comp.getUuid();
-		if (_comps.remove(uuid) == null || !recycleAllowed || recycleUuidDisabled())
+		if (_comps.remove(uuid) == null || !recycleAllowed || recycleUuidDisabled()
+				|| (comp instanceof StubComponent)) //Bug ZK-1452: don't need to recycle StubComponent's uuid since it's never reset
 			return false; //not recycled
 
 		//Bug 3002611: don't recycle UUID if RawId, since addUuidChanged will
@@ -706,6 +709,8 @@ public class DesktopImpl implements Desktop, DesktopCtrl, java.io.Serializable {
 			Events.postEvent(evt);
 		} else if (Events.ON_CLIENT_INFO.equals(cmd)) {
 			Events.postEvent(ClientInfoEvent.getClientInfoEvent(request));
+		} else if (Events.ON_VISIBILITY_CHANGE.equals(cmd)) {
+			Events.postEvent(VisibilityChangeEvent.getVisibilityChangeEvent(request));
 		} else if ("rmDesktop".equals(cmd)) {
 			((WebAppCtrl)request.getDesktop().getWebApp())
 				.getUiEngine().setAbortingReason(
@@ -1223,6 +1228,7 @@ public class DesktopImpl implements Desktop, DesktopCtrl, java.io.Serializable {
 				for (Component root = page.getFirstRoot();
 				root != null; root = root.getNextSibling())
 					if (Events.isListened(root, Events.ON_CLIENT_INFO, false)) {
+						setAttribute("org.zkoss.desktop.clientinfo.enabled", true);
 						addResponse(new AuClientInfo(this));
 						break l_out;
 					}
