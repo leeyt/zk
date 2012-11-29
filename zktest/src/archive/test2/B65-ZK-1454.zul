@@ -1,6 +1,6 @@
 <vlayout>
 	<html>
-	<p>Testing instructions:</p>
+	<p>Testing instructions: (IE, Safari Only)</p>
 	<ol>
 		<li>Expand the tree nodes until the scrollbar appears.</li>
 		<li>Scroll down</li>

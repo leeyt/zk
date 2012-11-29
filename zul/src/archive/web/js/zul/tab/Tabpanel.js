@@ -98,15 +98,32 @@ zul.tab.Tabpanel = zk.$extends(zul.Widget, {
 				if (!vis) {
 					$pl.show();
 					// Bug ZK-1454: Scrollbar forgets its position when switching tabs in Tabbox
-					if (zk.ie >= 8 || zk.safari)
-						$pl.scrollTop(this._lastScrollTop);
+					if (zk.ie || zk.safari) {
+						var tops = this._scrollTops, item;
+						if (tops) {
+							while (tops.length > 0) {
+								item = tops.shift();
+								item.elt.scrollTop(item.top);
+							}
+						}
+					}
 					zUtl.fireShown(this);
 				}
 			} else if (vis) {
 				zWatch.fireDown('onHide', this);
 				// Bug ZK-1454: Scrollbar forgets its position when switching tabs in Tabbox
-				if (zk.ie >= 8 || zk.safari)
-					this._lastScrollTop = $pl.scrollTop();
+				if (zk.ie || zk.safari) {
+					var tops = this._scrollTops = [ { elt: $pl, top: $pl.scrollTop() } ],
+						q = $pl.children().get(), elt, top;
+					while (q.length > 0) {
+						elt = jq(q.shift());
+						top = elt.scrollTop();
+						if (top > 0) {
+							tops.push({ elt: elt, top: top });
+						}
+						q = q.concat(elt.children().get());
+					}
+				}
 				$pl.hide();
 			}
 		}
@@ -211,7 +228,7 @@ zul.tab.Tabpanel = zk.$extends(zul.Widget, {
 	},
 	unbind_: function () {
 		zWatch.unlisten({onSize: this});
-		this._lastScrollTop = null;
+		this._lastScrollTops = null;
 		this.$supers(zul.tab.Tabpanel, 'unbind_', arguments);
 	}
 });

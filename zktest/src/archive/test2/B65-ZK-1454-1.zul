@@ -1,0 +1,56 @@
+<zk xmlns="http://www.zkoss.org/2005/zul">
+	<zscript><![CDATA[
+    import java.util.ArrayList;
+    import org.zkoss.zktest.test2.BigList;
+    import org.zkoss.zktest.test2.grid.FakeListModel;
+    import org.zkoss.zktest.test2.tree.BinaryTreeModel;
+    import org.zkoss.zul.ListModel;
+    import org.zkoss.zul.Treeitem;
+    
+	BinaryTreeModel btm = new BinaryTreeModel(new ArrayList(new BigList(1000)));
+	ListModel lm = new FakeListModel(1000);
+	
+	void initTree() {
+		for (int j = 0; j < 5; j++) {
+			arr = tree.getItems().toArray();
+			for (int i = 0; i < arr.length; i++) {
+				if (!arr[i].isOpen()) {
+					arr[i].setOpen(true);
+				}
+			}
+		}
+		Clients.scrollIntoView(arr[arr.length - 1]);
+	}
+	
+	void initList() {
+		list.setSelectedIndex(500);
+	}
+	]]></zscript>
+	<html>
+		<p>Testing instructions: (IE, Safari Only)</p>
+		<ol>
+			<li>Switch to Tab 2</li>
+			<li>Switch back to Tab 1</li>
+		</ol>
+		<p>The scrollbar positions should be where they were before the switch. Otherwise, it is a bug.</p>
+	</html>
+	<tabbox width="100%" height="600px">
+		<tabs>
+			<tab label="Tab 1" closable="true" />
+			<tab label="Tab 2" closable="true" />
+		</tabs>
+		<tabpanels>
+			<tabpanel style="overflow: auto;">
+				<hbox vflex="1" hflex="1">
+					<tree id="tree" model="${btm}" onCreate="initTree()" vflex="1" hflex="1">
+						<treecols hflex="1" vflex="1">
+							<treecol label="Tree Title" />
+						</treecols>
+					</tree>
+					<listbox id="list" vflex="1" hflex="1" model="${lm}" onCreate="initList()" />
+				</hbox>
+			</tabpanel>
+			<tabpanel>Close this panel</tabpanel>
+		</tabpanels>
+	</tabbox>
+</zk>
