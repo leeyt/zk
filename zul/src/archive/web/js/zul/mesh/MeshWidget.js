@@ -384,6 +384,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
  *  @see zul.sel.Listbox
  */
 zul.mesh.MeshWidget = zk.$extends(zul.Widget, {
+	_needScrlPosRetained: (zk.ie || zk.safari),
+	
 	_pagingPosition: "bottom",
 	_prehgh: -1,
 	_minWd: null, //minimum width for each column
@@ -656,7 +658,7 @@ zul.mesh.MeshWidget = zk.$extends(zul.Widget, {
 		
 		if (this.ebody)
 			this.domUnlisten_(this.ebody, 'onScroll');
-
+		
 		zWatch.unlisten({onSize: this, beforeSize: this, onResponse: this});
 		
 		this.$supers(zul.mesh.MeshWidget, 'unbind_', arguments);

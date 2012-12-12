@@ -19,6 +19,9 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
  * <p>Default {@link #getZclass}: z-tabpanel.
  */
 zul.tab.Tabpanel = zk.$extends(zul.Widget, {
+	// B65-ZK-1454: Scrollbar fogets its position after hidden then shown
+	_needScrlPosRetained: (zk.ie || zk.safari),
+
 	/** Returns the tabbox owns this component.
 	 * @return Tabbox
 	 */
@@ -97,6 +100,7 @@ zul.tab.Tabpanel = zk.$extends(zul.Widget, {
 			if (toSel) {
 				if (!vis) {
 					$pl.show();
+					/*
 					// Bug ZK-1454: Scrollbar forgets its position when switching tabs in Tabbox
 					if (zk.ie || zk.safari) {
 						var tops = this._scrollTops, item;
@@ -107,10 +111,12 @@ zul.tab.Tabpanel = zk.$extends(zul.Widget, {
 							}
 						}
 					}
+					*/
 					zUtl.fireShown(this);
 				}
 			} else if (vis) {
 				zWatch.fireDown('onHide', this);
+				/*
 				// Bug ZK-1454: Scrollbar forgets its position when switching tabs in Tabbox
 				if (zk.ie || zk.safari) {
 					var tops = this._scrollTops = [ { elt: $pl, top: $pl.scrollTop() } ],
@@ -124,6 +130,7 @@ zul.tab.Tabpanel = zk.$extends(zul.Widget, {
 						q = q.concat(elt.children().get());
 					}
 				}
+				*/
 				$pl.hide();
 			}
 		}

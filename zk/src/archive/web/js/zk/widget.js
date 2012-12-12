@@ -2829,6 +2829,69 @@ bind_: function (desktop, skipper, after) {
 				}, 300);
 			});
 		}
+		
+		// Bug ZK 1454: Scrollbar forgets its position when hidden then shown
+		if (this._needScrlPosRetained) {
+			this._retainScrlPos();
+		}
+		
+		// Bug ZK-1454
+		/*
+		if (zk.ie || zk.safari_) {
+			this._needScrlPosRetained = true;
+		}
+			var n = this.$n('body') || this.$n('cave') || this.$n();
+			if (n) {
+				after.push(function () {
+					setTimeout(function () {
+						var zkn = zk(n);
+						if (zkn.hasVScroll() || zkn.hasHScroll()) {
+							console.log(self.widgetName + ": listen show/hide");
+							zWatch.listen({ 
+								onShow: [self, self._resScrlPos], 
+								onHide: [self, self._bakScrlPos] 
+							});
+						}
+					}, 300);
+				});
+			}
+		}
+		*/
+	},
+	_retainScrlPos: function() {
+		var n = this.$n('body') || this.$n('cave') || this.$n();
+
+		if (n) {
+			/*
+			var zkn = zk(n);
+			if (zkn.hasVScroll() || zkn.hasHScroll()) {
+			*/
+				console.log(this.widgetName + ": listen show/hide");
+				console.log(this.widgetName + " overflow " + n.style.overflow);
+				zWatch.listen({ 
+					onShow: [this, this._resScrlPos], 
+					onHide: [this, this._bakScrlPos] 
+				});
+				this._needScrlPosRetained = false;
+			/*
+			}
+			*/
+		}
+	},
+	_resScrlPos: function() {
+		var n = this.$n('body') || this.$n() || this.$n('cave');
+		n.scrollTop  = (this._lastScrollTop  || 0);
+		n.scrollLeft = (this._lastScrollLeft || 0);
+		console.log("Restore " + this.widgetName + " -> " + n.scrollLeft + ", " + n.scrollTop);
+
+	},
+	_bakScrlPos: function() {
+		var n = this.$n('body') || this.$n() || this.$n('cave');
+		
+		this._lastScrollTop = n.scrollTop;
+		this._lastScrollLeft = n.scrollLeft;
+
+		console.log("Backup " + this.widgetName + " (" + n.className + ") <- " + n.scrollLeft + ", " + n.scrollTop);
 	},
 	/** Binds the children of this widget.
 	 * It is called by {@link #bind_} to invoke child's {@link #bind_} one-by-one.

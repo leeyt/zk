@@ -355,6 +355,8 @@ var Window =
  * <p>Default {@link #getZclass}: z-window-{@link #getMode()}.
  */
 zul.wnd.Window = zk.$extends(zul.Widget, {
+	_needScrlPosRetained: (zk.ie || zk.safari),
+	
 	_mode: 'embedded',
 	_border: 'none',
 	_minheight: 100,

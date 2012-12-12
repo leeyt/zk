@@ -19,6 +19,8 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
  * In other words, {@link Div} won't affect the uniqueness of identifiers.
  */
 zul.wgt.Div = zk.$extends(zul.Widget, {
+	_needScrlPosRetained: (zk.ie || zk.safari),
+	
 	$define: {
 		/** Returns the alignment.
 		 * <p>Default: null (use browser default).

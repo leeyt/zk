@@ -21,6 +21,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
  * <p>Default {@link #getZclass}: z-panelchildren.
  */
 zul.wnd.Panelchildren = zk.$extends(zul.Widget, {
+	_needScrlPosRetained: (zk.ie || zk.safari),
 	/**
 	 * This method is unsupported. Please use {@link zul.wnd.Panel#setHeight(String)} instead.
 	 * @param String height
