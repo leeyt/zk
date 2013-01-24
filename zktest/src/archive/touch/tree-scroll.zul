@@ -1,0 +1,36 @@
+<tree height="100px">
+	<treecols>
+		<treecol label="Column 1" />
+	</treecols>
+	<treechildren>
+		<treeitem label="Root 1">
+			<treechildren>
+				<treeitem label="Child 1.1" />
+				<treeitem label="Child 1.2" />
+				<treeitem label="Child 1.3" />
+				<treeitem label="Child 1.4" />
+				<treeitem label="Child 1.5" />
+			</treechildren>
+		</treeitem>
+		<treeitem label="Root 2">
+			<treechildren>
+				<treeitem label="Child 1.1" />
+				<treeitem label="Child 1.2">
+					<treechildren>
+						<treeitem label="Grandchild 1.2.1"/>
+						<treeitem label="Grandchild 1.2.2"/>
+						<treeitem label="Grandchild 1.2.3"/>
+					</treechildren>
+				</treeitem>
+				<treeitem label="Child 1.3" />
+				<treeitem label="Child 1.4" />
+				<treeitem label="Child 1.5" />
+			</treechildren>
+		</treeitem>
+		<treeitem label="Root 3">
+		</treeitem>
+	</treechildren>
+	<treefoot>
+		<treefooter label="Footer 1" />
+	</treefoot>
+</tree>

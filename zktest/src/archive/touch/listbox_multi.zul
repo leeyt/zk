@@ -1,0 +1,24 @@
+<?page title="Multi-column Listbox" contentType="text/html;charset=UTF-8"?>
+<listbox>
+	<listhead>
+		<listheader label="Column1"/>
+		<listheader label="Column2"/>
+		<listheader label="Column3"/>
+		<listheader label="Column4"/>
+	</listhead>
+	<listitem>
+		<listcell label="cell1"/>
+		<listcell label="cell2" span="2"/>
+		<listcell label="cell3"/>
+	</listitem>
+	<listitem>
+		<listcell label="cell1" span="3"/>
+		<listcell label="cell2"/>
+	</listitem>
+	<listitem>
+		<listcell label="cell1"/>
+		<listcell label="cell2"/>
+		<listcell label="cell3"/>
+		<listcell label="cell4"/>
+	</listitem>
+</listbox>

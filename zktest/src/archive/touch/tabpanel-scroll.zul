@@ -1,0 +1,26 @@
+<tabbox height="100%">
+	<tabs>
+		<tab label="Tab 1" />
+		<tab label="Tab 2" />
+	</tabs>
+	<tabpanels>
+		<tabpanel style="overflow: auto;">
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+		</tabpanel>
+		<tabpanel>
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+			<div width="99%" height="200px" style="border: 1px solid black;" />
+		</tabpanel>
+	</tabpanels>
+</tabbox>

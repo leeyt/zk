@@ -1,0 +1,123 @@
+<borderlayout>
+	<north size="20%" autoscroll="true">
+		<div style="background-color: #abcdef;">
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		</div>
+	</north>
+	<west size="20%" autoscroll="true">
+		<div style="background-color: #fedcba;">
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		</div>
+	</west>
+	<center autoscroll="true">
+		<div style="background-color: #cdefab;">
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		</div>
+	</center>
+	<east size="20%" autoscroll="true">
+		<div style="background-color: #fedcba;">
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		</div>
+	</east>
+	<south size="20%" autoscroll="true">
+		<div style="background-color: #efabcd;">
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		This is a very long content. This is a very long content. This is a very long content.
+		</div>
+	</south>
+</borderlayout>

@@ -1,0 +1,14 @@
+<zk>
+	<zscript>
+	<![CDATA[
+	    import java.util.*;
+	    import org.zkoss.zul.*;
+		ListModel model = 
+			new ListModelList(new String[] {
+				"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"
+				});
+	]]>
+	</zscript>
+
+	<combobox model="${model}" width="100px" />
+</zk>
