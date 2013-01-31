@@ -90,8 +90,16 @@ zul.layout.Rowlayout = zk.$extends(zk.Widget, {
 				.css('width', '100%')
 				.css('margin-left', 0);
 		}
+		
+		// only fire when child has h/vflex
+		for (var w = child.firstChild; w; w = w.nextSibling) {
+			if (w._nvflex || w._nhflex) {
+				zUtl.fireSized(w);
+				break;
+			}
+		}
 	},
-			
+	
 	bind_: function() {
 		this.$supers('bind_', arguments);
 		zWatch.listen({onSize: this});

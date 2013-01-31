@@ -61,7 +61,7 @@ public class Rowchildren extends HtmlBasedComponent {
 	}
 	
 	public void beforeParentChanged(Component parent) {
-		if (!(parent instanceof Rowlayout))
+		if (parent != null && !(parent instanceof Rowlayout))
 			throw new UiException(
 				"Wrong parent for " + this.getClass().getName()	+ ": " + parent);
 		super.beforeParentChanged(parent);
