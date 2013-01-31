@@ -1,0 +1,59 @@
+<zk>
+	<!-- Default: colspan=12, colWidth=60, spacing=20 -->
+	<rowlayout>
+		<rowchildren forEach="1,1,1,1,1,1,1,1,1,1,1,1" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+	<rowlayout>
+		<rowchildren forEach="2,2,2" colspan="${each}" offset="2">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+	<rowlayout>
+		<rowchildren forEach="3,3,3,3" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+	<rowlayout>
+		<rowchildren forEach="4,4,4" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+	<rowlayout>
+		<rowchildren forEach="6,6" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+	<rowlayout>
+		<rowchildren forEach="12" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>
+	</rowlayout>
+
+	<rowlayout ncols="4" spacing="10" colWidth="10">
+		<rowchildren forEach="1,1,1,1" colspan="${each}">
+			<button hflex="1" label="test"/>
+		</rowchildren>	
+	</rowlayout>
+	
+	<rowlayout ncols="2" spacing="0" colWidth="1">
+		<rowchildren forEach="1,1" colspan="${each}">
+			<rowlayout ncols="3" spacing="1" colWidth="4">
+				<rowchildren colspan="1">
+					<button hflex="1" label="test" />
+				</rowchildren>
+				<rowchildren colspan="1" offset="1">
+					<button hflex="1" label="test" />
+				</rowchildren>
+			</rowlayout>
+		</rowchildren>
+	</rowlayout>
+	
+	<hlayout>
+		<rowlayout>
+			<rowchildren colspan="12"/>
+		</rowlayout>
+		<div width="100px" height="100px" style="background-color: #ccc"/>
+	</hlayout>
+</zk>
