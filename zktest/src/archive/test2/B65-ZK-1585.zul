@@ -1,0 +1,23 @@
+<zk>
+	<label multiline="true">
+		Android, iOS Only
+		
+	</label>
+	
+	<vlayout>
+		<hlayout>
+			Result = 
+			<label id="result" />
+		</hlayout>
+		<hlayout>
+			Decimalbox =
+			<decimalbox id="dbx">
+			<attribute name="onBlur">
+			<![CDATA[
+				result.setValue(dbx.getValue().toString());
+			]]>
+			</attribute>
+			</decimalbox>
+		</hlayout>
+	</vlayout> 
+</zk>
