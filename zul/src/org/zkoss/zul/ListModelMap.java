@@ -64,7 +64,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 	 *
 	 * However, it is not a good idea to modify <code>map</code>
 	 * if it is passed to this method with live is true,
-	 * since {@link Listbox} is not smart enough to hanle it.
+	 * since {@link Listbox} is not smart enough to handle it.
 	 * Instead, modify it thru this object.
 	 * @since 2.4.0
 	 */
@@ -81,7 +81,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 	
 	/**
 	 * Constructor.
-	 * It mades a copy of the specified map (i.e., not live).
+	 * It makes a copy of the specified map (i.e., not live).
 	 *
 	 * <p>Notice that if the data is static or not shared, it is better to
 	 * use <code>ListModelMap(map, true)</code> instead, since
@@ -142,17 +142,17 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 		Entry0(Map.Entry<K, V> entry) {
 			_entry = entry;
 		}
-		@Override
+		
 		public K getKey() {
 			return _entry != null ? _entry.getKey() : _key;
 		}
 
-		@Override
+		
 		public V getValue() {
 			return _entry != null ? _entry.getValue() : _value;
 		}
 
-		@Override
+		
 		public V setValue(V value) {
 			V oldValue = _value;
 			if (_entry != null) {
@@ -163,7 +163,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
             return oldValue;
 		}
 		
-		@Override
+		
 		public final boolean equals(Object o) {
             if (_entry != null)
             	return _entry.equals(o);
@@ -183,7 +183,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
             return false;
         }
 		
-		@Override
+		
         public final int hashCode() {
 			if (_entry != null)
 				return _entry.hashCode();
@@ -191,7 +191,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
                    (_value == null ? 0 : _value.hashCode());
         }
 		
-		@Override
+		
 		public final String toString() {
 			if (_entry != null)
 				return _entry.toString();
@@ -406,7 +406,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 	 *
 	 * @param cmpr the comparator.
 	 * @param ascending whether to sort in the ascending order.
-	 * It is ignored since this implementation uses cmprt to compare.
+	 * It is ignored since this implementation uses cmpr to compare.
 	 */
 	public void sort(Comparator<Map.Entry<K, V>> cmpr, final boolean ascending) {
 		final List<Map.Entry<K, V>> copy = new ArrayList<Map.Entry<K, V>>(_map.entrySet());
@@ -804,7 +804,6 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public Object clone() {
 		ListModelMap<K, V> clone = (ListModelMap<K, V>) super.clone();
 		if (_map != null)
@@ -812,7 +811,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 		return clone;
 	}
 	
-	@Override
+	
 	protected void fireSelectionEvent(Entry<K,V> e) {
 		fireEvent(ListDataEvent.SELECTION_CHANGED, indexOf(e), -1);
 	}
@@ -829,7 +828,7 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 		removeFromSelection(obj);
 	}
 
-	@Override
+	
 	protected void writeSelection(java.io.ObjectOutputStream s)
 	throws java.io.IOException {
 		s.writeInt(_selection.size());
@@ -837,7 +836,6 @@ implements Sortable<Map.Entry<K, V>>, Map<K, V>, java.io.Serializable {
 			s.writeObject(sel.getKey());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
 	protected void readSelection(java.io.ObjectInputStream s)
 	throws java.io.IOException, ClassNotFoundException {
 		_selection = newEmptySelection();

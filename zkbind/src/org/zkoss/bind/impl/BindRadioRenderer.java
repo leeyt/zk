@@ -15,9 +15,6 @@ package org.zkoss.bind.impl;
 import java.io.Serializable;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.xel.VariableResolverX;
-import org.zkoss.xel.XelContext;
-import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.ForEachStatus;
@@ -45,15 +42,15 @@ public class BindRadioRenderer extends AbstractRenderer implements RadioRenderer
 		} else {
 			final ForEachStatus iterStatus = new AbstractForEachStatus(){//provide iteration status in this context
 				private static final long serialVersionUID = 1L;
-				@Override
+				
 				public int getIndex() {
 					return index;
 				}
-				@Override
+				
 				public Object getEach(){
 					return data;
 				}
-				@Override
+				
 				public Integer getEnd(){
 					return size;
 				}

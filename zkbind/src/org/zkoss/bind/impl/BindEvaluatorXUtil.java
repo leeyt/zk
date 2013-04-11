@@ -24,7 +24,7 @@ import org.zkoss.xel.FunctionMapper;
 import org.zkoss.zk.ui.Component;
 
 /**
- * a internal utility to help doing evaluation.
+ * an internal utility to help doing evaluation.
  * @author dennis
  * @since 6.0.0
  */
@@ -94,13 +94,22 @@ public class BindEvaluatorXUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T eval(BindEvaluatorX evalx, Component comp, String expression, Class<T> expectedType,Map<String, Object> implicit){
 		BindContext ctx = null;
+		ctx = new BindContextImpl(null,null,false,null,comp,null);
 		if(implicit!=null){
-			ctx = new BindContextImpl(null,null,false,null,null,null);
 			ctx.setAttribute(ImplicitObjectELResolver.IMPLICIT_OBJECTS, implicit);
 		}
 		
-		ExpressionX expr = evalx.parseExpressionX(null, expression, expectedType);
+		ExpressionX expr = evalx.parseExpressionX(ctx, expression, expectedType);
 		Object obj = evalx.getValue(ctx, comp, expr);
 		return (T)obj;
+	}
+	
+	//remove ${ and }
+	public static String getExpressionString(ExpressionX expr) {
+		if (expr == null) {
+			return null;
+		}
+		final String evalstr = expr.getExpressionString(); 
+		return evalstr.substring(2, evalstr.length() - 1);
 	}
 }

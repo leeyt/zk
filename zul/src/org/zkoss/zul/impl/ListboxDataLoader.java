@@ -121,7 +121,7 @@ public class ListboxDataLoader implements DataLoader, Cropper { //no need to ser
 					//Bug 3147518: avoid memory leak
 					//Also better performance (outer better than remove a lot)
 
-			//detach from end (due to groopfoot issue)
+			//detach from end (due to groupfoot issue)
 			Component comp = _listbox.getItemAtIndex(max);
 			while (--cnt >= 0) {
 				Component p = comp.getPreviousSibling();
@@ -242,23 +242,23 @@ public class ListboxDataLoader implements DataLoader, Cropper { //no need to ser
 								return data;
 							} else if ("forEachStatus".equals(name)) {
 								return new ForEachStatus() {
-									@Override
+									
 									public ForEachStatus getPrevious() {
 										return null;
 									}
-									@Override
+									
 									public Object getEach() {
 										return data;
 									}
-									@Override
+									
 									public int getIndex() {
 										return index;
 									}
-									@Override
+									
 									public Integer getBegin() {
 										return 0;
 									}
-									@Override
+									
 									public Integer getEnd() {
 										return listbox.getModel().getSize();
 									}
@@ -409,7 +409,7 @@ public class ListboxDataLoader implements DataLoader, Cropper { //no need to ser
 	}
 
 	/** Retrieves the children available at client.
-	 * <p>It can not be overriden. Rather, override {@link #getAvailableAtClient(boolean)} instead.
+	 * <p>It can not be overridden. Rather, override {@link #getAvailableAtClient(boolean)} instead.
 	 */
 	public final Set<? extends Component> getAvailableAtClient() {
 		return getAvailableAtClient(false);

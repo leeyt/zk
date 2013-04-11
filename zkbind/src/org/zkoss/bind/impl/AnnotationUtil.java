@@ -17,12 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.util.IllegalSyntaxException;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.metainfo.Annotation;
 import org.zkoss.zk.ui.sys.ComponentCtrl;
 
 /**
- * A internal util to help processing component annotation, for internal using only.
+ * An internal utility to help processing component annotation, for internal using only.
  * 
  * @author dennis
  * @since 6.0.1
@@ -45,13 +44,17 @@ public class AnnotationUtil {
 		return anno;
 	}
 	
-	public static String testString(String[] string, Component comp,String propName, String tag){
+//	public static String testString(String[] string, Component comp,String propName, String tag){
+//		return testString(string, comp, propName, tag);
+//	}
+	public static String testString(String[] string,Annotation anno){
 		if(string==null || string.length==0){
 			return null;
 		}else if(string.length==1){
 			return string[0];
 		}else{
-			throw new IllegalSyntaxException("only allow one string of "+tag +" attribute="+propName+" on comp= "+comp+", but contains "+Arrays.toString(string));
+			throw new IllegalSyntaxException(MiscUtil.formatLocationMessage(
+					"only allow one string of @" + anno.getName() + ",but contains " + Arrays.toString(string),anno));
 		}
 	}
 }

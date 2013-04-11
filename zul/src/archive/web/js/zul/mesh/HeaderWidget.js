@@ -56,7 +56,7 @@ zul.mesh.HeaderWidget = zk.$extends(zul.LabelImageWidget, {
 		}
 	},
 	setFlexSize_: function (sz) {
-		if ((sz.width !== undefined && sz.width != 'auto' && sz.width != '') || sz.width == 0) { //JavaScript deems 0 == '' 
+		if ((sz.width !== undefined && sz.width != 'auto' && sz.width != '') || sz.width == 0) { //JavaScript deems 0 == ''
 			//remember the value in _hflexWidth and use it when rerender(@see #domStyle_)
 			//for faker column, so don't use revisedWidth().
 			//updated: need to concern inner padding due to _getContentEdgeWidth
@@ -266,11 +266,20 @@ zul.mesh.HeaderWidget = zk.$extends(zul.LabelImageWidget, {
 				if (scroll > 11)
 					w -= scroll;
 
-				if (zk.ie){ //Related bugs: ZK-890 and ZK-242
-					if (scroll > 11 || !mw.ebody.clientWidth) {
+				if (zk.ie) { //Related bugs: ZK-890 and ZK-242
+					//Bug ZK-1642: only IE 6/7 has horizontal scrollbar issue
+					if (zk.ie < 8 && (scroll > 11 || !mw.ebody.clientWidth)) {
 						// For bug #3255116, we have to avoid IE to appear the hor. scrollbar.
 						var hdflex = jq(mw.ehead).find('table>tbody>tr>th:last-child')[0];
-						hdflex.style.width = '';
+						var clear = true; //Bug ZK-1642 for IE 6/7, only clear hdflex width if all headers have hflex or defined width
+						for (var c = this.parent.firstChild; c; c = c.nextSibling) {
+							if (!(c._hflex || c.$n().style.width)) {
+								clear = false;
+								break;
+							}
+						}
+						if (clear)
+							hdflex.style.width = '';
 						if (mw.ebodytbl)
 							mw.ebodytbl.width = "";
 					} else if (mw.ebodytbl && !mw.ebodytbl.width) {

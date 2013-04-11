@@ -133,7 +133,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				if (zk.ie < 8 && max < wd) {
 					max = wd;
 					maxj = i;
-				} else if (zk.ff > 4 || zk.ie == 9) {// firefox4 & IE9 still cause break line in case B50-3147926 column 1
+				} else if (zk.ff > 4 || zk.ie >= 9) {// firefox4 & IE9 & IE10 still cause break line in case B50-3147926 column 1
 					++wds[i];
 				}
 				if (zk.ie < 8) // B50-ZK-206
@@ -153,7 +153,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					if (zk.ie < 8 && max < wd) {
 						max = wd;
 						maxj = i;
-					} else if (zk.ff > 4 || zk.ie == 9) // firefox4 & IE9 still cause break line in case B50-3147926 column 1
+					} else if (zk.ff > 4 || zk.ie >= 9) // firefox4 & IE9 & IE10 still cause break line in case B50-3147926 column 1
 						++wds[i];
 					if (zk.ie < 8) // B50-ZK-206
 						wds[i] += 2;
@@ -715,7 +715,7 @@ zul.mesh.MeshWidget = zk.$extends(zul.Widget, {
 						empty = false;
 				}
 			var old = this.ehead.style.display,
-				tofix = (force || empty) && flex && this.isRealVisible();
+				tofix = force && flex && this.isRealVisible(); //Bug ZK-1647: no need to consider empty header for flex calculation
 			this.ehead.style.display = empty ? 'none' : '';
 			//onSize is not fired to empty header when loading page, so we have to simulate it here
 			for (var w = this.head.firstChild; w; w = w.nextSibling) {
@@ -844,37 +844,42 @@ zul.mesh.MeshWidget = zk.$extends(zul.Widget, {
 		if (zk.safari && this._ignoreDoScroll) 
 			return;
 		
+		var ehead = this.ehead,
+			ebody = this.ebody,
+			efoot = this.efoot;
+		
 		// Bug ZK-1284: Scrolling on grid/listbox header could cause column heading/body to misalign
-		if ((zk.chrome || zk.ie || zk.safari) && this.ehead && !(this.fire('onScroll', this.ehead.scrollLeft).stopped)) {
-			if (this._currentLeft != this.ehead.scrollLeft) {
-				if (this.ebody)
-					this.ebody.scrollLeft = this.ehead.scrollLeft;
-				if (this.efoot) 
-					this.efoot.scrollLeft = this.ehead.scrollLeft;
+		if ((zk.chrome || zk.ie || zk.safari) && ehead && zk(ehead).isVisible() && //Bug ZK-1649: should check if ehead is visible or not
+				!(this.fire('onScroll', ehead.scrollLeft).stopped)) {
+			if (this._currentLeft != ehead.scrollLeft) {
+				if (ebody)
+					ebody.scrollLeft = ehead.scrollLeft;
+				if (efoot) 
+					efoot.scrollLeft = ehead.scrollLeft;
 			}
 		}
 		
-		if (!(this.fire('onScroll', this.ebody.scrollLeft).stopped)) {
-			if (this._currentLeft != this.ebody.scrollLeft) { //care about horizontal scrolling only
-				if (this.ehead) {
-					this.ehead.scrollLeft = this.ebody.scrollLeft;
+		if (!(this.fire('onScroll', ebody.scrollLeft).stopped)) {
+			if (this._currentLeft != ebody.scrollLeft) { //care about horizontal scrolling only
+				if (ehead) {
+					ehead.scrollLeft = ebody.scrollLeft;
 					//bug# 3039339: Column is not aligned in some special combination of dimension
-					var diff = this.ebody.scrollLeft - this.ehead.scrollLeft;
-					var hdflex = jq(this.ehead).find('table>tbody>tr>th:last-child')[0];
+					var diff = ebody.scrollLeft - ehead.scrollLeft;
+					var hdflex = jq(ehead).find('table>tbody>tr>th:last-child')[0];
 					if (diff) { //use the hdfakerflex to compensate
 						hdflex.style.width = (hdflex.offsetWidth + diff) + 'px';
-						this.ehead.scrollLeft = this.ebody.scrollLeft;
-					} else if (parseInt(hdflex.style.width) != 0 && this.ebody.scrollLeft == 0) {
+						ehead.scrollLeft = ebody.scrollLeft;
+					} else if (parseInt(hdflex.style.width) != 0 && ebody.scrollLeft == 0) {
 						hdflex.style.width = '';
 					}
 				}
-				if (this.efoot) 
-					this.efoot.scrollLeft = this.ebody.scrollLeft;
+				if (efoot) 
+					efoot.scrollLeft = ebody.scrollLeft;
 			}
 		}
 		
 		var t = zul.mesh.Scrollbar.getScrollPosV(this),
-			l = this.ebody.scrollLeft,
+			l = ebody.scrollLeft,
 			scrolled = (t != this._currentTop || l != this._currentLeft);
 		if (scrolled && 
 				// Bug ZK-353 ignore in rod
@@ -1024,7 +1029,7 @@ zul.mesh.MeshWidget = zk.$extends(zul.Widget, {
 				this.fireOnRender(155); // force to render while using live grouping
 				return; // unchanged
 			}
-				
+			
 			this._calcSize();// Bug #1813722
 			
 			this.fireOnRender(155);

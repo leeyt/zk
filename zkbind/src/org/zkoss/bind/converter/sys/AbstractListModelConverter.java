@@ -13,7 +13,6 @@ package org.zkoss.bind.converter.sys;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +123,7 @@ public abstract class AbstractListModelConverter<C extends Component> implements
 	@SuppressWarnings("rawtypes")
 	public Object coerceToBean(Object val, C comp, BindContext ctx) {
 		if (val == null) {
-			throw new NullPointerException("val");
+			throw new NullPointerException("value");
 		}
 		if (val instanceof ListModelSet) {
 			return ((ListModelSet)val).getInnerSet();

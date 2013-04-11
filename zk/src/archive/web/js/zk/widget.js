@@ -1698,7 +1698,7 @@ wgt.$f().main.setTitle("foo");
 			//Alertinative is to introduce another isVisibleXxx but not worth
 				if (!zk(wgt.$n()).isVisible(opts.strict))
 					return _markCache(cache, visited, false);
-			} else if (!wgt._visible)
+			} else if (!wgt._visible) // TODO: wgt._visible is not accurate, if tabpanel is not selected, we should fix in ZK 7.(B65-ZK-1076)
 				return _markCache(cache, visited, false);
 
 			//check if it is hidden by parent, such as child of hbox/vbox or border-layout
@@ -1734,7 +1734,7 @@ wgt.$f().main.setTitle("foo");
 		if (!strict || !visible)
 			return visible;
 		var n = this.$n();
-		return !n || zk(n).isVisible();
+		return n && zk(n).isVisible(); //ZK-1692: widget may not bind or render yet
 	},
 	/** Sets whether this widget is visible.
 	 * <h3>Subclass Notes</h3>
@@ -2113,7 +2113,7 @@ out.push('</div>');
 			if ((f = this.$class.molds) && (f = f[this._mold]))
 				return f.apply(this, arguments);
 
-			zk.error("Mold "+mold+" not found in "+this.className);
+			zk.error("Mold "+this._mold+" not found in "+this.className);
 		}
 	},
 	/* Utilities for handling the so-called render defer ({@link #setRenderdefer}).
@@ -2441,17 +2441,7 @@ function () {
 	 * @return String the HTML fragment
 	 */
 	redrawHTML_: function (skipper, trim) {
-		var out = zk.chrome ? new (function() {
-				var result = "";
-				this.push = function () {
-					for (var i = 0, j = arguments.length; i<j;i++)
-						if (arguments[i] != null || arguments[i] != undefined ) //skip null or undefined arguments, bug ZK-1535: don't skip 0
-							result += arguments[i];
-				};
-				this.join = function () {
-					return result;
-				};
-			}) : [];
+		var out = []; // Due to the side-effect of B65-ZK-1628, we remove the optimization of the array's join() for chrome.
 		this.redraw(out, skipper);
 		out = out.join('');
 		return trim ? out.trim(): out;
@@ -2837,14 +2827,17 @@ bind_: function (desktop, skipper, after) {
 			_listenFlex(this);
 
 		this.bindChildren_(desktop, skipper, after);
+		var self = this;
 		if (this.isListen('onBind')) {
-			var self = this;
 			zk.afterMount(function () {
 				if (self.desktop) //might be unbound
 					self.fire('onBind');
 			});
 		}
-		var self = this;
+		
+		if (this.isListen('onAfterSize')) //Feature ZK-1672
+			zWatch.listen({onSize: this});
+		
 		if (zk.mobile) {
 			after.push(function (){
 				setTimeout(function () {// lazy init
@@ -2908,7 +2901,10 @@ unbind_: function (skipper, after) {
 		this.unbindSwipe_();
 		this.unbindDoubleTap_();
 		this.unbindTapHold_();
-
+		
+		if (this.isListen('onAfterSize')) //Feature ZK-1672
+			zWatch.unlisten({onSize: this});
+		
 		if (this.isListen('onUnbind')) {
 			var self = this;
 			zk.afterMount(function () {
@@ -3137,10 +3133,12 @@ unbind_: function (skipper, after) {
 	 */
 	initDrag_: function () {
 		var n = this.getDragNode();
-		this._drag = new zk.Draggable(this, n, this.getDragOptions_(_dragoptions));
-		// B50-3306835.zul
-		if (zk.ie9 && jq.nodeName(n, "img"))
-			jq(n).bind('mousedown', zk.$void);
+		if (n) { //ZK-1686: should check if DragNode exist
+			this._drag = new zk.Draggable(this, n, this.getDragOptions_(_dragoptions));
+			// B50-3306835.zul
+			if (zk.ie9 && jq.nodeName(n, "img"))
+				jq(n).bind('mousedown', zk.$void);
+		}
 	},
 	/** Cleans up the widget to make it un-draggable. It is called if {@link #getDraggable}
 	 * is cleaned (or unbound).
@@ -3267,6 +3265,27 @@ unbind_: function (skipper, after) {
 
 		jq(this.getDragNode()).removeClass('z-dragged');
 	},
+	
+	//Feature ZK-1672: provide empty onSize function if the widget is listened to onAfterSize 
+	//	but the widget is never listened to onSize event
+	onSize: function() {},
+	/**
+	 * Called to fire the onAfterSize event.
+	 * @since 6.5.2
+	 */
+	onAfterSize: function () {
+		if (this.desktop && this.isListen('onAfterSize')) {
+			var n = this.getCaveNode(),
+				width = n.offsetWidth,
+				height = n.offsetHeight;
+			if (this._preWidth != width || this._preHeight != height) {
+				this._preWidth = width;
+				this._preHeight = height;
+				this.fire('onAfterSize', {width: width, height: height});
+			}
+		}
+	},
+	
 	/** Bind swipe event to the widget on tablet device.
 	 * It is called if HTML 5 data attribute (data-swipeable) is set to true.
 	 * <p>You rarely need to override this method, unless you want to bind swipe behavior differently.

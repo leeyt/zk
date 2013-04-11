@@ -60,7 +60,7 @@ import org.zkoss.zk.ui.util.CharsetFinder;
 import org.zkoss.zk.ui.util.Configuration;
 
 /**
- * The AU extension to upload files withd HTML5 feature.
+ * The AU extension to upload files with HTML5 feature.
  * It is based on Apache Commons File Upload.
  * @since 6.5.0
  */
@@ -68,17 +68,14 @@ public class AuDropUploader implements AuExtension {
 	private static final Log log = Log.lookup(AuDropUploader.class);
 
 	public AuDropUploader() {}
-	
-	@Override
+		
 	public void init(DHtmlUpdateServlet servlet) {
 	}
-	
-	@Override
+		
 	public void destroy() {}
 
 	/** Processes a file uploaded from the client.
 	 */
-	@Override
 	public void service(
 	HttpServletRequest request, HttpServletResponse response, String pathInfo)
 	throws ServletException, IOException {		

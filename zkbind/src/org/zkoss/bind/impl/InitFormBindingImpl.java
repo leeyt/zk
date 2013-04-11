@@ -27,6 +27,8 @@ import org.zkoss.bind.sys.BinderCtrl;
 import org.zkoss.bind.sys.ConditionType;
 import org.zkoss.bind.sys.InitFormBinding;
 import org.zkoss.bind.sys.InitPropertyBinding;
+import org.zkoss.bind.sys.debugger.BindingExecutionInfoCollector;
+import org.zkoss.bind.sys.debugger.impl.info.LoadInfo;
 import org.zkoss.bind.xel.zel.BindELContext;
 import org.zkoss.xel.ExpressionX;
 import org.zkoss.zk.ui.Component;
@@ -38,7 +40,7 @@ import org.zkoss.zk.ui.Component;
  */
 public class InitFormBindingImpl extends FormBindingImpl implements InitFormBinding {
 	private static final long serialVersionUID = 1463169907348730644L;
-	@Override
+	
 	protected boolean ignoreTracker(){
 		//init only loaded once, so it don't need to add to tracker.
 		return true;
@@ -69,7 +71,7 @@ public class InitFormBindingImpl extends FormBindingImpl implements InitFormBind
 				final String fomrid = getFormId();
 				List<String> fields = new LinkedList<String>(fex.getLoadFieldNames());
 				Collections.sort(fields, new Comparator<String>() {
-					@Override
+					
 					public int compare(String o1, String o2) {
 						o1 = BindELContext.appendFields(fomrid, o1);
 						o2 = BindELContext.appendFields(fomrid, o2);
@@ -93,6 +95,12 @@ public class InitFormBindingImpl extends FormBindingImpl implements InitFormBind
 			binder.notifyChange(form, "."); //notify change of fx and fx.*
 			if(form instanceof FormExt){//after notify form
 				binder.notifyChange(((FormExt)form).getStatus(), ".");//notify change of fxStatus and fxStatus.*
+			}
+			
+			BindingExecutionInfoCollector collector = ((BinderCtrl)getBinder()).getBindingExecutionInfoCollector();
+			if(collector!=null){
+				collector.addInfo(new LoadInfo(LoadInfo.FORM_INIT,comp,null,
+						getPropertyString(),getFormId(),value,getArgs(),null));
 			}
 		}else{
 			((BinderCtrl)binder).storeForm(getComponent(), getFormId(), (Form)value);

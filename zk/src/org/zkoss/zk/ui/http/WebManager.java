@@ -16,14 +16,13 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zk.ui.http;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Enumeration;
-import java.net.URL;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -32,47 +31,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.zkoss.lang.Objects;
 import org.zkoss.lang.Library;
+import org.zkoss.lang.Objects;
 import org.zkoss.util.CollectionsX;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.util.resource.Locator;
 import org.zkoss.util.resource.XMLResourcesLocator;
-
 import org.zkoss.web.servlet.Servlets;
+import org.zkoss.web.util.resource.ClassWebResource;
+import org.zkoss.web.util.resource.Extendlet;
 import org.zkoss.web.util.resource.ServletContextLocator;
 import org.zkoss.web.util.resource.ServletLabelLocator;
 import org.zkoss.web.util.resource.ServletRequestResolver;
-import org.zkoss.web.util.resource.ClassWebResource;
-import org.zkoss.web.util.resource.Extendlet;
-
-import org.zkoss.zk.ui.Execution;
-import org.zkoss.zk.ui.WebApps;
-import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Page;
-import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Richlet;
+import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.util.Configuration;
-import org.zkoss.zk.ui.metainfo.PageDefinitions;
-import org.zkoss.zk.ui.metainfo.PageDefinition;
-import org.zkoss.zk.ui.metainfo.LanguageDefinition;
-import org.zkoss.zk.ui.sys.DesktopCtrl;
-import org.zkoss.zk.ui.sys.ExecutionsCtrl;
-import org.zkoss.zk.ui.sys.UiFactory;
-import org.zkoss.zk.ui.sys.WebAppsCtrl;
-import org.zkoss.zk.ui.sys.SessionsCtrl;
-import org.zkoss.zk.ui.sys.WebAppCtrl;
-import org.zkoss.zk.ui.sys.WebAppFactory;
-import org.zkoss.zk.ui.sys.ConfigParser;
-import org.zkoss.zk.ui.sys.RequestInfo;
+import org.zkoss.zk.ui.WebApp;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.impl.RequestInfoImpl;
 import org.zkoss.zk.ui.impl.Utils;
+import org.zkoss.zk.ui.metainfo.LanguageDefinition;
+import org.zkoss.zk.ui.metainfo.PageDefinition;
+import org.zkoss.zk.ui.metainfo.PageDefinitions;
+import org.zkoss.zk.ui.sys.ConfigParser;
+import org.zkoss.zk.ui.sys.DesktopCtrl;
+import org.zkoss.zk.ui.sys.ExecutionsCtrl;
+import org.zkoss.zk.ui.sys.RequestInfo;
+import org.zkoss.zk.ui.sys.SessionsCtrl;
+import org.zkoss.zk.ui.sys.UiFactory;
+import org.zkoss.zk.ui.sys.WebAppCtrl;
+import org.zkoss.zk.ui.sys.WebAppFactory;
+import org.zkoss.zk.ui.sys.WebAppsCtrl;
+import org.zkoss.zk.ui.util.Configuration;
 
 /**
- * A bridge bewteen Web server and ZK.
+ * A bridge between Web server and ZK.
  *
  * <p>Each Web application that uses ZK will have an independent instance
  * of {@link WebManager}.
@@ -138,8 +135,14 @@ public class WebManager {
 		String XML = "metainfo/zk/zk.xml";
 		try {
 			final XMLResourcesLocator loc = Utils.getXMLResourcesLocator();
-			for (Enumeration en = loc.getResources(XML); en.hasMoreElements();) {
-				final URL cfgUrl = (URL)en.nextElement();
+			
+			// B65-ZK-1671: ThemeProvider specified in metainfo/zk/zk.xml may get overridden by default
+			//   Also need to enforce configuration loading order (zul -> zkex -> zkmax) so that correct
+			//   versions of StandardThemeProvider, ThemeRegistry, and ThemeResolver are configured
+			final List<XMLResourcesLocator.Resource> xmls = loc.getDependentXMLResources(
+					XML, "config-name", "depends");
+			for (XMLResourcesLocator.Resource res: xmls) {		
+				final URL cfgUrl = res.url;
 				try {
 					parser.parse(cfgUrl, config, loc);
 				} catch (Throwable ex) {
@@ -431,7 +434,7 @@ public class WebManager {
 			SessionsCtrl.newSession(wapp, hsess, request);
 	}
 
-	/** Called when a HTTP session listner is notified.
+	/** Called when a HTTP session listener is notified.
 	 * <p>Once called the session is cleaned. All desktops are dropped.
 	 */
 	/*package*/ static final

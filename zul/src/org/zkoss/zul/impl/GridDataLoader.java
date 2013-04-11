@@ -133,7 +133,7 @@ public class GridDataLoader implements DataLoader, Cropper {
 			else if (max < 0) max = cnt - 1; //0 ~ cnt - 1			
 			if (max > oldsz - 1) max = oldsz - 1;
 
-			//detach from end (due to groopfoot issue)
+			//detach from end (due to groupfoot issue)
 			Component comp = rows.getChildren().get(max);
 			while (--cnt >= 0) {
 				Component p = comp.getPreviousSibling();
@@ -264,23 +264,23 @@ public class GridDataLoader implements DataLoader, Cropper {
 								return data;
 							} else if ("forEachStatus".equals(name)) {
 								return new ForEachStatus() {
-									@Override
+									
 									public ForEachStatus getPrevious() {
 										return null;
 									}
-									@Override
+									
 									public Object getEach() {
 										return data;
 									}
-									@Override
+									
 									public int getIndex() {
 										return index;
 									}
-									@Override
+									
 									public Integer getBegin() {
 										return 0;
 									}
-									@Override
+									
 									public Integer getEnd() {
 										return grid.getModel().getSize();
 									}

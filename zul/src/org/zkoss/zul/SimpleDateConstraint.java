@@ -111,7 +111,7 @@ public class SimpleDateConstraint extends SimpleConstraint {
 	public Date getBeginDate() {
 		return _beg;
 	}
-	/** Returns the ending date, or null if therer is no constraint of
+	/** Returns the ending date, or null if there is no constraint of
 	 * the ending date.
 	 */
 	public Date getEndDate() {
@@ -132,10 +132,10 @@ public class SimpleDateConstraint extends SimpleConstraint {
 				_end = d;
 			}
 			return 0;
-		} else if (constraint.startsWith("before")) {
+		} else if (constraint.startsWith("before") && !constraint.startsWith("before_")) {
 			_end = parseDate(constraint.substring(6));
 			return 0;
-		} else if (constraint.startsWith("after")) {
+		} else if (constraint.startsWith("after") && !constraint.startsWith("after_")) {
 			_beg = parseDate(constraint.substring(5));
 			return 0;
 		}

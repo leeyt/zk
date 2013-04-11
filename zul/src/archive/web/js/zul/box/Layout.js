@@ -86,10 +86,13 @@ zul.box.Layout = zk.$extends(zk.Widget, {
 			this.syncSize();
 	},
 	//Bug ZK-1579: should resize if child's visible state changed.
-	onChildVisible_: function () {
+	onChildVisible_: function (child) {
 		this.$supers('onChildVisible_', arguments);
-		if (this.desktop) 
+		if (this.desktop) {
 			this._shallSize = true;
+			//Bug ZK-1650: change chdex display style according to child widget
+			child.$n('chdex').style.display = child.isVisible() ? '' : 'none';
+		}
 	},
 	onChildAdded_: function () {
 		this.$supers('onChildAdded_', arguments);
@@ -120,8 +123,13 @@ zul.box.Layout = zk.$extends(zk.Widget, {
 			spc = this._spacing;
 		
 		oo.push('<div id="', child.uuid, '-chdex" class="', this.getZclass(), '-inner"');
-		if(spc && spc != 'auto' && child.nextSibling)
-			oo.push(' style="padding-' + (vert ? 'bottom:' : 'right:') + spc + '"');
+		if (spc && spc != 'auto') {
+			oo.push(' style="', !child.isVisible() ? 'display:none;' : ''); //Bug ZK-1650: set chdex display style according to child widget
+			var next = child.nextSibling; //Bug ZK-1526: popup should not consider spacing
+			if (next && !next.$instanceof(zul.wgt.Popup))
+				oo.push('padding-', vert ? 'bottom:' : 'right:', spc);
+			oo.push('"');
+		}
 		oo.push('>');
 		child.redraw(oo);
 		oo.push('</div>');
@@ -139,15 +147,17 @@ zul.box.Layout = zk.$extends(zk.Widget, {
 		var vert = this.isVertical_();
 		if (!zk.mounting) { // ignore for the loading time
 			for (var kid = this.firstChild; kid; kid = kid.nextSibling) {
-				if (vert ? (kid._nvflex && kid.getVflex() != 'min')
-						 : (kid._nhflex && kid.getHflex() != 'min')) {
-					
+				var chdex = kid.$n('chdex');
+				//ZK-1679: clear height only vflex != min, clear width only hflex != min
+				if (vert && kid._nvflex && kid.getVflex() != 'min') {
 					kid.setFlexSize_({height:'', width:''});
-					var chdex = kid.$n('chdex');
-					if (chdex) {
+					if (chdex)
 						chdex.style.height = '';
+				}
+				if (!vert && kid._nhflex && kid.getHflex() != 'min') {
+					kid.setFlexSize_({height:'', width:''});
+					if (chdex)
 						chdex.style.width = '';
-					}
 				}
 			}
 		}
@@ -170,7 +180,7 @@ zul.box.Layout = zk.$extends(zk.Widget, {
 	//bug#3296056
 	afterResetChildSize_: function(orient) {
 		for (var kid = this.firstChild; kid; kid = kid.nextSibling) {				
-			var chdex = kid.$n('chdex');
+			var chdex = kid.$n();  //ZK-1509: use kid.$n() instead of kid.$n('chdex')
 			if (chdex) {
 				if (orient == 'h')
 					chdex.style.height = '';
@@ -199,6 +209,17 @@ zul.box.Layout = zk.$extends(zk.Widget, {
 	},
 	getChildMinSize_: function (attr, wgt) { //'w' for width or 'h' for height
 		var el = wgt.$n(); //Bug ZK-1578: should get child size instead of chdex size
+		//If child uses hflex="1" when parent has hflex="min"
+		//   Find max sibling width and apply on the child
+		if (wgt._hflex && this.isVertical_() && attr == 'w') {
+			for (var w = wgt.nextSibling, max = 0, width; w; w = w.nextSibling) {
+				if (!w._hflex) {
+					width = zjq.minWidth(w.$n());
+					max = width > max ? width : max;
+				}
+			}
+			return max;
+		}
 		return attr == 'h' ? zk(el).offsetHeight() : zjq.minWidth(el); //See also bug ZK-483
 	},
 	//Bug ZK-1577: should consider spacing size of all chdex node

@@ -66,6 +66,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 		addClientEvent(HtmlBasedComponent.class, Events.ON_MOUSE_OVER, 0); //not to use CE_DUPLICATE_IGNORE since there is an order issue
 		addClientEvent(HtmlBasedComponent.class, Events.ON_MOUSE_OUT, 0);
 		addClientEvent(HtmlBasedComponent.class, Events.ON_SWIPE, CE_DUPLICATE_IGNORE);
+		addClientEvent(HtmlBasedComponent.class, Events.ON_AFTER_SIZE, CE_DUPLICATE_IGNORE);
 	}
 
 	protected HtmlBasedComponent() {
@@ -252,7 +253,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 	  * Sets the ZK Cascading Style class(es) for this component.
 	  * It usually depends on the implementation of the mold (@{link #getMold}).
 	  *
-	  * @param zclass the style class used to apply the whote widget.
+	  * @param zclass the style class used to apply to the whole widget.
 	  * @since 3.5.0
 	  * @see #setSclass
 	  * @see #getZclass
@@ -349,7 +350,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 	}
 	/** Sets "true" or "false" to denote whether a component is droppable,
 	 * or a list of identifiers of draggable types of objects that could
-	 * be droped to this component.
+	 * be dropped to this component.
 	 *
 	 * <p>The simplest way to make a component droppable is to set
 	 * this attribute to true. To disable it, set this to false.
@@ -500,7 +501,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 	 * at the client.
 	 * <p>Default: -1 (don't wait).
 	 *
-	 * <p>This method is useful if you have a sophiscated page that takes
+	 * <p>This method is useful if you have a sophisticated page that takes
 	 * long to render at a slow client. You can specify a non-negative value
 	 * as the render-defer delay such that the other part of the UI can appear
 	 * earlier. The styling of the render-deferred widget is controlled by
@@ -510,7 +511,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 	 * at the client.
 	 * @param ms time to wait in milliseconds before rendering.
 	 * Notice: 0 also implies deferring the rendering (just right after
-	 * all others are renderred).
+	 * all others are rendered).
 	 * @since 5.0.2
 	 */
 	public void setRenderdefer(int ms) {
@@ -622,6 +623,9 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 			setWidthDirectly(evt.getWidth());
 			setHeightDirectly(evt.getHeight());
 			Events.postEvent(evt);
+		} else if (cmd.equals(Events.ON_AFTER_SIZE)) {
+			AfterSizeEvent evt = AfterSizeEvent.getAfterSizeEvent(request);
+			Events.postEvent(evt);
 		} else if (cmd.equals(Events.ON_Z_INDEX)) {
 			ZIndexEvent evt = ZIndexEvent.getZIndexEvent(request);
 			setZIndexDirectly(evt.getZIndex());
@@ -670,7 +674,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 			_auxinf = new AuxInfo();
 		return _auxinf;
 	}
-	/** Merge multiple memembers into an single object (and create on demand)
+	/** Merge multiple members into an single object (and create on demand)
 	 * to minimize the footprint
 	 * @since 5.0.4
 	 */
@@ -681,7 +685,7 @@ abstract public class HtmlBasedComponent extends AbstractComponent {
 		private  String height;
 		private String left;
 		private String top;
-		/** The virtical flex */
+		/** The vertical flex */
 		private String vflex;
 		/** The horizontal flex */
 		private String hflex;

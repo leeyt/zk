@@ -73,8 +73,7 @@ public class BeanELResolver extends ELResolver {
     public BeanELResolver(boolean readOnly) {
         this.readOnly = readOnly;
     }
-
-    @Override
+    
     public Object getValue(ELContext context, Object base, Object property)
             throws NullPointerException, PropertyNotFoundException, ELException {
         if (context == null) {
@@ -100,8 +99,7 @@ public class BeanELResolver extends ELResolver {
             throw new ELException(e);
         }
     }
-
-    @Override
+    
     public Class<?> getType(ELContext context, Object base, Object property)
             throws NullPointerException, PropertyNotFoundException, ELException {
         if (context == null) {
@@ -114,8 +112,7 @@ public class BeanELResolver extends ELResolver {
         context.setPropertyResolved(true);
         return this.property(context, base, property).getPropertyType();
     }
-
-    @Override
+    
     public void setValue(ELContext context, Object base, Object property,
             Object value) throws NullPointerException,
             PropertyNotFoundException, PropertyNotWritableException,
@@ -138,7 +135,7 @@ public class BeanELResolver extends ELResolver {
         Method m = this.property(context, base, property).write(context);
 
         //for ZK-1178: check type of mehtod's parameter is the same as type of value
-        //XXX refactory into write() ?
+        //XXX refactored into write() ?
         if (!checkType(m, value)) {
         	Class<?> baseClass = base.getClass();
         	for (Method method : baseClass.getMethods()) {
@@ -192,8 +189,7 @@ public class BeanELResolver extends ELResolver {
 		}
 		return clazzes[0].isInstance(value);
     }
-
-    @Override
+    
     public boolean isReadOnly(ELContext context, Object base, Object property)
             throws NullPointerException, PropertyNotFoundException, ELException {
         if (context == null) {
@@ -207,8 +203,7 @@ public class BeanELResolver extends ELResolver {
         return this.readOnly
                 || this.property(context, base, property).isReadOnly();
     }
-
-    @Override
+    
     public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
         if (context == null) {
             throw new NullPointerException();
@@ -238,8 +233,7 @@ public class BeanELResolver extends ELResolver {
 
         return null;
     }
-
-    @Override
+    
     public Class<?> getCommonPropertyType(ELContext context, Object base) {
         if (context == null) {
             throw new NullPointerException();
@@ -503,7 +497,6 @@ public class BeanELResolver extends ELResolver {
     /**
      * @since EL 2.2
      */
-    @Override
     public Object invoke(ELContext context, Object base, Object method,
             Class<?>[] paramTypes, Object[] params) {
 		if (context == null) {

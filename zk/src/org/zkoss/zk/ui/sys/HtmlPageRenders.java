@@ -103,6 +103,8 @@ public class HtmlPageRenders {
 	private static final String ATTR_DESKTOP_CLIENTINFO = "org.zkoss.desktop.clientinfo.enabled";
 	/** Enabled visibility change */
 	private static final String ATTR_DESKTOP_VISIBILITYCHANGE = "org.zkoss.desktop.visibilitychange.enabled";
+	/** Support Portlet 2.0 */
+	private static final String ATTR_PORTLET2_RESOURCEURL = "org.zkoss.portlet2.resourceURL";
 
 	/** Sets the content type to the specified execution for the given page.
 	 * @param exec the execution (never null)
@@ -503,7 +505,7 @@ public class HtmlPageRenders {
 		final PageCtrl pageCtrl = (PageCtrl)page;
 		final Component owner = pageCtrl.getOwner();
 		boolean contained = owner == null && exec.isIncluded();
-			//a standalong page (i.e., no owner), and being included by
+			//a standalone page (i.e., no owner), and being included by
 			//non-ZK page (e.g., JSP).
 			//
 			//Revisit Bug 2001707: OK to use exec.isIncluded() since
@@ -659,6 +661,13 @@ public class HtmlPageRenders {
 			if (dt.getAttribute(ATTR_DESKTOP_VISIBILITYCHANGE) != null) {
 				dt.removeAttribute(ATTR_DESKTOP_VISIBILITYCHANGE);
 				out.write("<script type=\"text/javascript\">if(zk.visibilitychange === undefined)zk.visibilitychange = true;</script>");
+			}
+			String resourceURL = (String) page.getAttribute(ATTR_PORTLET2_RESOURCEURL, Page.PAGE_SCOPE);
+			if(resourceURL != null) {
+				page.removeAttribute(ATTR_PORTLET2_RESOURCEURL, Page.PAGE_SCOPE);
+				out.write("<script type=\"text/javascript\">zk.portlet2AjaxURI = '");
+				out.write(resourceURL);
+				out.write("';</script>");
 			}
 		}
 		outSEOContent(page, out);
@@ -818,9 +827,9 @@ public class HtmlPageRenders {
 	}
 	private static Boolean _groupingAllowed;
 		
-	/** Generates the content of a standalone componnent that
+	/** Generates the content of a standalone component that
 	 * the peer widget is not a child of the page widget at the client.
-	 * @param comp the compoent to render. It is null if no child component
+	 * @param comp the component to render. It is null if no child component
 	 * at all.
 	 */
 	public static final void outStandalone(Execution exec,
@@ -1009,7 +1018,7 @@ public class HtmlPageRenders {
 		public final Writer temp;
 		/** The writer used to generate the content that exists
 		 * even after the widgets have been rendered.
-		 * It is currenlty used only to generate CSS style.
+		 * It is currently used only to generate CSS style.
 		 * <p>It is null if the current page is included by another.
 		 */
 		public final Writer perm;

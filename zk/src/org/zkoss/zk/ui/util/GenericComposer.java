@@ -32,7 +32,7 @@ import org.zkoss.zk.ui.metainfo.ComponentInfo;
  * Rather, you can extend from one of the following skeletons.
  * <dl>
  * <dt>{@link org.zkoss.zk.ui.select.SelectorComposer}</dt>
- * <dd>It supports the autowiring based on Java annoataion and a CSS3-based selector.
+ * <dd>It supports the autowiring based on Java annotation and a CSS3-based selector.
  * If you don't know which one to use, use {@link org.zkoss.zk.ui.select.SelectorComposer}.</dd>
  * <dt>{@link GenericForwardComposer}</dt>
  * <dd>It supports the autowiring based on naming convention.
@@ -101,24 +101,22 @@ implements Composer<T>, ComposerExt<T>, java.io.Serializable {
 		_applied = comp.getUuid();
 		bindComponent(comp);
 	}
-
-	@Override
+	
 	public ComponentInfo doBeforeCompose(Page page, Component parent,
 			ComponentInfo compInfo) { //do nothing
 		return compInfo;
 	}
-	@Override
+	
 	public void doBeforeComposeChildren(T comp) throws Exception {
 		//assign this composer as a variable
 		//feature #2778508
 		ConventionWires.wireController(comp, this);
 	}
-
-	@Override
+	
 	public boolean doCatch(Throwable ex) throws Exception { //do nothing
 		return false;
 	}
-	@Override
+	
 	public void doFinally() throws Exception { //do nothing
 	}
 }

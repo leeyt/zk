@@ -21,6 +21,9 @@ import org.zkoss.bind.impl.AnnotateBinderHelper;
 import org.zkoss.bind.impl.BinderImpl;
 import org.zkoss.bind.impl.BinderUtil;
 import org.zkoss.bind.xel.zel.BindELContext;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Page;
@@ -35,19 +38,24 @@ import org.zkoss.zk.ui.util.UiLifeCycle;
  * @since 6.0.0
  */
 public class BindUiLifeCycle implements UiLifeCycle {
+	
+	static final Log log = Log.lookup(BindUiLifeCycle.class);
+	private static Extension _ext;
+	
 	public void afterComponentAttached(Component comp, Page page) {
 		if (comp.getDesktop() != null) {
 			//check if this component already binded
-			final Binder selfBinder = BinderUtil.getBinder(comp);
+			Binder selfBinder = BinderUtil.getBinder(comp);
 			if (selfBinder == null) {
 				//check if parent exists any binder
-				final Binder binder = BinderUtil.getBinder(comp,true);
+				Binder parentBinder = BinderUtil.getBinder(comp,true);
 				
-				if (binder != null && (binder instanceof BinderImpl)) {
+				//post event to let the binder to handle binding later
+				if (parentBinder != null && (parentBinder instanceof BinderImpl)) {
 					//ZK-603, ZK-604, ZK-605
 					//register internal ON_BIND_INIT event listener to delay the timing of init and loading bindings
 					comp.addEventListener(10000, BinderImpl.ON_BIND_INIT, new EventListener<Event>() {
-						@Override
+						
 						public void onEvent(Event event) throws Exception {
 							final Component comp = event.getTarget();
 							comp.removeEventListener(BinderImpl.ON_BIND_INIT, this);
@@ -62,10 +70,27 @@ public class BindUiLifeCycle implements UiLifeCycle {
 								return;
 							}
 							
+							//ZK-1640 command send 2 wrong ViewModel
+							//check if there any parent binder again, don't use out-side parentBinder, it is not correct
+							Binder binder = BinderUtil.getBinder(comp,true);
+							if(binder == null){
+								return;
+							}
+							
+							//ZK-1699 Performance issue ZK-Bind getters are called multiple times
+							//check if it is handling, if yes then skip to evaluate it.
+							if(getExtension().isLifeCycleHandling(comp)){
+								return;
+							}
+							
 							if(binder instanceof AnnotateBinder){
 								new AnnotateBinderHelper(binder).initComponentBindings(comp);
 							}
-								
+							
+							//ZK-1699, mark the comp and it's children are handling.
+							//note:mark handing before load, because of some load will change(create or reset) the children structure
+							//(consider F00769.zul if you bind to tree open , it will load children in loadComponent)
+							getExtension().markLifeCycleHandling(comp);
 							
 							binder.loadComponent(comp,true);
 							
@@ -122,6 +147,56 @@ public class BindUiLifeCycle implements UiLifeCycle {
 		if (binder != null) {
 			binder.removeBindings(comp);
 		}
+		
+		getExtension().removeLifeCycleHandling(comp);
 	}
 	
+	private static Extension getExtension() {
+		if (_ext == null) {
+			synchronized (BindUiLifeCycle.class) {
+				if (_ext == null) {
+					String clsnm = Library.getProperty("org.zkoss.bind.tracker.impl.extension");
+					if (clsnm != null) {
+						try {
+							_ext = (Extension)Classes.newInstanceByThread(clsnm);
+						} catch (Throwable ex) {
+							log.realCauseBriefly("Unable to instantiate "+clsnm, ex);
+						}
+					}
+					if (_ext == null)
+						_ext = new DefaultExtension();
+				}
+			}
+		}
+		return _ext;
+	}
+	/**
+	 * Internal use only.
+	 * Mark a component and it's children are handling already in current execution.
+	 * So, if the component attach to component tree(cause {@code #afterComponentAttached(Component, Page)}, 
+	 * BindUiLifeCycle will not process it again.
+	 */
+	public static void markLifeCycleHandling(Component comp) {
+		getExtension().markLifeCycleHandling(comp);
+	}
+	
+	/** An interface used to extend the {@code BindUiLifeCycle}.
+	 * The class name of the extension shall be specified in
+	 * the library properties called org.zkoss.bind.tracker.impl.extension.
+	 * <p>Notice that it is used only internally.
+	 * @since 6.5.3
+	 */
+	public static interface Extension {
+		public void markLifeCycleHandling(Component comp);
+		public boolean isLifeCycleHandling(Component comp);		
+		public void removeLifeCycleHandling(Component comp);
+	}
+	private static class DefaultExtension implements Extension {
+		public void markLifeCycleHandling(Component comp) {}
+
+		public boolean isLifeCycleHandling(Component comp) {
+			return false;
+		}
+		public void removeLifeCycleHandling(Component comp) {}
+	}
 }

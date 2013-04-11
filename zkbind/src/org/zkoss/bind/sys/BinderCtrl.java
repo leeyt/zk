@@ -17,6 +17,8 @@ import java.util.Set;
 import org.zkoss.bind.Binder;
 import org.zkoss.bind.Form;
 import org.zkoss.bind.PhaseListener;
+import org.zkoss.bind.sys.debugger.BindingAnnotationInfoChecker;
+import org.zkoss.bind.sys.debugger.BindingExecutionInfoCollector;
 import org.zkoss.bind.sys.tracker.Tracker;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -37,9 +39,14 @@ public interface BinderCtrl {
 	public static final String DEFAULT_QUEUE_NAME = "$ZKBIND_DEFQUE$"; //the associated event queue name
 	
 	/**
-	Default queue scope of a binder to share the bean notification and global commands
+	 * Default queue scope of a binder to share the bean notification and global commands
 	 */
 	public static final String DEFAULT_QUEUE_SCOPE = EventQueues.DESKTOP; //the associated event queue name
+	
+	/**
+	 * PhaseListener key
+	 */
+	public static final String PHASE_LISTENER_CLASS_KEY = "org.zkoss.bind.PhaseListener.class";
 	
 	/**
 	 * Add a association between formId and a associated save binding(save binding inside a form), the form has to exist in the parent components
@@ -118,8 +125,17 @@ public interface BinderCtrl {
 	public List<Binding> getLoadPromptBindings(Component comp, String attr);
 	
 	
-	//TODO should public this API or change to listeners feature in future
+	/**
+	 * get the {@link PhaseListener}
+	 * @return the {@link PhaseListener}
+	 */
 	public PhaseListener getPhaseListener();
+	
+	/**
+	 * set the {@link PhaseListener}
+	 * @param listener the {@link PhaseListener}
+	 */
+	public void setPhaseListener(PhaseListener listener);
 	
 	/**
 	 * check if binder is in activating state
@@ -127,5 +143,18 @@ public interface BinderCtrl {
 	 * @since 6.0.1
 	 */
 	public boolean isActivating();
+
+	/** 
+	 * get binding execution info collector
+	 * @return the collector instance or null if no collector is existed
+	 * @since 6.5.2 
+	 */
+	public BindingExecutionInfoCollector getBindingExecutionInfoCollector();
 	
+	/** 
+	 * get binding annotation info checker
+	 * @return the collector instance or null if no collector is existed
+	 * @since 6.5.2 
+	 */
+	public BindingAnnotationInfoChecker getBindingAnnotationInfoChecker();
 }

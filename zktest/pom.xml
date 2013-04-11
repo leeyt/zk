@@ -26,7 +26,7 @@
 		<timelinez.version>2.3.1_50</timelinez.version>
 		<timeplotz.version>1.1_50</timeplotz.version>
 	</properties>
-	<version>6.5.2-SNAPSHOT</version>
+	<version>6.5.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<licenses>
 		<license>
@@ -88,6 +88,16 @@
 			<version>${project.version}</version>
 		</dependency>
 		-->
+		<dependency>
+			<groupId>org.zkoss.theme</groupId>
+			<artifactId>silvertail</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.theme</groupId>
+			<artifactId>sapphire</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -219,6 +229,16 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jcommon</artifactId>
+					<groupId>jfree</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jfreechart</artifactId>
+					<groupId>jfree</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>

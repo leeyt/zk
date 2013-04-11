@@ -23,7 +23,7 @@ import java.util.AbstractSet;
  * filtering).
  * For example, if you allow the value to have EL expressions and want to
  * evaluate it before returning, then
- * you could implemnent {@link Filter} to evaluate the value when the value
+ * you could implement {@link Filter} to evaluate the value when the value
  * is retrieved. Then, encapsulate the original map with this class. For example,
  * <pre><code>
  return new FilterMap(map,
@@ -35,7 +35,7 @@ import java.util.AbstractSet;
 </code></pre>
  *
  * <p>Notice that this map is readonly, and it is thread-safe if
- * the give map and the fitler are both thread safe.
+ * the give map and the filter are both thread safe.
  *
  * @author tomyeh
  * @since 5.0.7
@@ -57,17 +57,15 @@ public class FilterMap<K, V> extends AbstractMap<K, V> {
 	public Map<K, V> getOrigin() {
 		return _map;
 	}
-
-	//@Override
+	
 	public V get(Object key) {
 		return _filter.filter(key, _map.get(key));
 	}
-	//@Override
+	
 	public boolean containsKey(Object key) {
 		return _map.containsKey(key);
 	}
-
-	//@Override
+	
 	public Set<Map.Entry<K,V>> entrySet() {
 		return new EntrySet();
 	}
@@ -168,16 +166,15 @@ public class FilterMap<K, V> extends AbstractMap<K, V> {
 		 */
 		public V filter(Object key, V value);
 	}
-
-	//@Override
+	
 	public String toString() {
 		return _map.toString();
 	}
-	//@Override
+	
 	public int hashCode() {
 		return _map.hashCode();
 	}
-	//@Override
+	
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		final FilterMap fm;

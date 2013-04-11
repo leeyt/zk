@@ -329,7 +329,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 		_auxinf.spaceInfo.fellows.remove(compId);
 	}
 
-	//-- Extra utlities --//
+	//-- Extra utilities --//
 	/** Returns the UI engine based on {@link #_page}'s getDesktop().
 	 * Don't call this method when _page is null.
 	 */
@@ -376,7 +376,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 					clearVirtualIdSpace(); //clear if being attached
 				else if (_page.getDesktop() != page.getDesktop())
 					throw new UiException("The new page must be in the same desktop: "+page);
-					//Not allow developers to access two desktops simutaneously
+					//Not allow developers to access two desktops simultaneously
 				checkIdSpacesDown(this, page);
 
 				//No need to check UUID since checkIdSpacesDown covers it
@@ -419,7 +419,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 	 * One possible but rare case: the component's
 	 * visual part at the client updates the visual representation
 	 * at the client and then notify the component at the server
-	 * to update its children accordingly. In this case, it is redudant
+	 * to update its children accordingly. In this case, it is redundant
 	 * if we ask UI Engine to send the updates to client.
 	 *
 	 * @param oldparent the parent before moved.
@@ -1518,7 +1518,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 	 * If it is {@link org.zkoss.zk.au.DeferredValue}, the value
 	 * will be retrieved (by calling {@link org.zkoss.zk.au.DeferredValue#getValue})
 	 * in the rendering phase. It is useful if the value can not be determined now.
-	 * <p>For some old application servers (example, Webshpere 5.1),
+	 * <p>For some old application servers (example, Websphere 5.1),
 	 * {@link Execution#encodeURL} cannot be called in the event processing
 	 * thread. So, the developers have to use {@link org.zkoss.zk.au.DeferredValue}
 	 * or disable the use of the event processing thread
@@ -1528,7 +1528,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 	 * {@link JavaScriptValue}. Notice that the JavaScript code will be evaluated
 	 * before assigning it to the widget.
 	 * <p>If the value is a Date object, a special pattern will be generated
-	 * (aka., marshaling)
+	 * (a.k.a., marshaling)
 	 * to ensure it can be unmarshalled back correctly at the client.
 	 * Notice that it is marshalled to a string based
 	 * on {@link org.zkoss.util.TimeZones#getCurrent}, and then
@@ -1714,7 +1714,7 @@ implements Component, ComponentCtrl, java.io.Serializable {
 		onListenerChange(page.getDesktop(), false);
 	}
 
-	/** Returns the widget class (aka., widget type), or null if not defined.
+	/** Returns the widget class (a.k.a., widget type), or null if not defined.
 	 * <p>Default: return the widget class based on the current mold
 	 * (by use of {@link ComponentDefinition#getWidgetClass}), or null
 	 * if not found.
@@ -1760,7 +1760,7 @@ w:use="foo.MyWindow"&gt;
 		}
 	}
 
-	//@override
+	
 	public boolean disableClientUpdate(boolean disable) {
 		final UiEngine uieng =
 			_page != null ? getAttachedUiEngine(): getCurrentUiEngine();
@@ -2741,7 +2741,7 @@ w:use="foo.MyWindow"&gt;
 	private static void onEvent(EventListener listener, Event event) throws Exception {
 		listener.onEvent(event);
 	}
-	@Override
+	
 	public EventListenerMap getEventListenerMap() {
 		return new EventListenerMapImpl(
 			_auxinf != null ? _auxinf.listeners: null,
@@ -2800,14 +2800,14 @@ w:use="foo.MyWindow"&gt;
 					m = Classes.getCloseMethod(getClass(), mtdnm, new Class[] {null});
 				} catch (NoSuchMethodException e3) {
 					log.warningBriefly("setter not found", ex);
-					return; //ingore it
+					return; //ignore it
 				}
 			}
 			try {
 				args[0] = Classes.coerce(m.getParameterTypes()[0], value);
 			} catch (Throwable e2) {
 				log.warning(m+" requires "+m.getParameterTypes()[0]+", not "+value);
-				return; //ingore it
+				return; //ignore it
 			}
 		}
 
@@ -3213,12 +3213,12 @@ w:use="foo.MyWindow"&gt;
 		return _auxinf;
 	}
 
-	@Override
+	
 	public Template getTemplate(String name) {
 		return _auxinf != null && _auxinf.templates != null ?
 			_auxinf.templates.get(name): null;
 	}
-	@Override
+	
 	public Template setTemplate(String name, Template template) {
 		if (template == null) {
 			return _auxinf != null && _auxinf.templates != null ?
@@ -3230,19 +3230,19 @@ w:use="foo.MyWindow"&gt;
 			return auxinf.templates.put(name, template);
 		}
 	}
-	@Override
+	
 	public Set<String> getTemplateNames() {
 		if (_auxinf != null && _auxinf.templates != null)
 			return _auxinf.templates.keySet();
 		return Collections.emptySet();
 	}
-	@Override
+	
 	public Component query(String selector) {
 		final Iterator<Component> found =
 			Selectors.iterable(this, selector).iterator();
 		return found.hasNext() ? found.next(): null;
 	}
-	@Override
+	
 	public Iterable<Component> queryAll(String selector) {
 		return Selectors.iterable(this, selector);
 	}

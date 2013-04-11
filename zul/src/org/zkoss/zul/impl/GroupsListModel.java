@@ -37,7 +37,7 @@ import org.zkoss.zul.ext.GroupsSortableModel;
 import org.zkoss.zul.ext.Selectable;
 
 /**
- * Encapulates {@link org.zkoss.zul.GroupsModel} as an instance of {@link org.zkoss.zul.ListModel}
+ * Encapsulates {@link org.zkoss.zul.GroupsModel} as an instance of {@link org.zkoss.zul.ListModel}
  * such that it is easier to handle by {@link org.zkoss.zul.Listbox} and 
  * {@link org.zkoss.zul.Group}.
  *
@@ -208,7 +208,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 
 	//Selectable
 	@SuppressWarnings("unchecked")
-	@Override
 	public Set<Object> getSelection() {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).getSelection();
@@ -216,7 +215,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 	}
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
-	@Override
 	public void setSelection(Collection<?> selection) {
 		if (_model instanceof Selectable) 
 			((Selectable) _model).setSelection(selection);
@@ -224,14 +222,12 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 			super.setSelection(selection);
 	}
 	/** {@inheritDoc} */
-	@Override
 	public boolean isSelected(Object obj) {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).isSelected(obj);
 		return super.isSelected(obj);
 	}
 	/** {@inheritDoc} */
-	@Override
 	public boolean isSelectionEmpty() {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).isSelectionEmpty();
@@ -240,7 +236,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
-	@Override
 	public boolean addToSelection(Object obj) {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).addToSelection(obj);
@@ -248,7 +243,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 			return super.addToSelection(obj);
 	}
 	/** {@inheritDoc} */
-	@Override
 	public boolean removeFromSelection(Object obj) {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).removeFromSelection(obj);
@@ -256,7 +250,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 	}
 	
 	/** {@inheritDoc} */
-	@Override
 	public void clearSelection() {
 		if (_model instanceof Selectable) 
 			((Selectable) _model).clearSelection();
@@ -264,7 +257,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 			super.clearSelection();
 	}
 	/** {@inheritDoc} */
-	@Override
 	public boolean isMultiple() {
 		if (_model instanceof Selectable) 
 			return ((Selectable) _model).isMultiple();
@@ -272,7 +264,6 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 	}
 	
 	/** {@inheritDoc} */
-	@Override
 	public void setMultiple(boolean multiple) {
 		if (_model instanceof Selectable) 
 			((Selectable) _model).setMultiple(multiple);
@@ -359,10 +350,10 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 			fireEvent(type, j0, j1);
 		}
 	}
-	/** The group infomation returned by {@link GroupsListModel#getDataInfo}.
+	/** The group information returned by {@link GroupsListModel#getDataInfo}.
 	 */
 	public static class GroupDataInfo implements GroupingInfo {
-		/** Indicates the data is a group (aka., the head of the group). */
+		/** Indicates the data is a group (a.k.a., the head of the group). */
 		public static final byte GROUP = 0;
 		/** Indicates the data is a group foot. */
 		public static final byte GROUPFOOT = 1;
@@ -391,22 +382,22 @@ public class GroupsListModel<D, G, F> extends AbstractListModel<Object> {
 			_open = open;
 		}
 
-		@Override
+		
 		public int getType() {
 			return _type;
 		}
 
-		@Override
+		
 		public int getGroupIndex() {
 			return _groupIndex;
 		}
 
-		@Override
+		
 		public int getOffset() {
 			return _offset;
 		}
 
-		@Override
+		
 		public boolean isOpen() {
 			return _open;
 		}
@@ -438,7 +429,6 @@ implements GroupsSortableModel<D>, ComponentCloneListener, Cloneable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Override
 	public Object willClone(Component comp) {
 		if (_model instanceof ComponentCloneListener) {
 			GroupsListModelExt clone = (GroupsListModelExt) clone();

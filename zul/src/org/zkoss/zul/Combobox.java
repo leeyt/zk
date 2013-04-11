@@ -106,7 +106,7 @@ public class Combobox extends Textbox {
 	private ComboitemRenderer<?>_renderer;
 	private transient ListDataListener _dataListener;
 	private transient EventListener<InputEvent> _eventListener;
-	/**Used to detect whether to syn Comboitem's index later. */
+	/**Used to detect whether to sync Comboitem's index later. */
 	private boolean _syncItemIndicesLater;
 
 	static {
@@ -151,7 +151,7 @@ public class Combobox extends Textbox {
 	 * If a non-null model is assigned, no matter whether it is the same as
 	 * the previous, it will always cause re-render.
 	 *
-	 * @param model the list model to associate, or null to dis-associate
+	 * @param model the list model to associate, or null to dissociate
 	 * any previous model.
 	 * @exception UiException if failed to initialize with the model
 	 * @since 3.0.2
@@ -165,10 +165,13 @@ public class Combobox extends Textbox {
 				if (_model != null) {
 					_model.removeListDataListener(_dataListener);
 				}
-				// Bug B60-ZK-1202.zul
-				// Remove current items anyway, when changing models
-				if (!getItems().isEmpty()) { 
-				    getItems().clear();  
+				// ZK-1702: do not clear Comboitems if using Data Binding 1
+				if (_model != null && !_model.getClass().getName().equals("org.zkoss.zkplus.databind.BindingListModelList")) {
+					// Bug B60-ZK-1202.zul
+					// Remove current items anyway, when changing models
+					if (!getItems().isEmpty()) {
+						getItems().clear();
+					}
 				}
 				
 				_model = model;
@@ -182,7 +185,7 @@ public class Combobox extends Textbox {
 			//such that we won't render the same set of data twice
 			//--
 			//For better performance, we shall load the first few row now
-			//(to save a roundtrip)
+			//(to save a round trip)
 		} else if (_model != null) {
 			_model.removeListDataListener(_dataListener);
 			if (_model instanceof ListSubModel)
@@ -391,23 +394,23 @@ public class Combobox extends Textbox {
 								return data;
 							} else if ("forEachStatus".equals(name)) {
 								return new ForEachStatus() {
-									@Override
+									
 									public ForEachStatus getPrevious() {
 										return null;
 									}
-									@Override
+									
 									public Object getEach() {
 										return data;
 									}
-									@Override
+									
 									public int getIndex() {
 										return index;
 									}
-									@Override
+									
 									public Integer getBegin() {
 										return 0;
 									}
-									@Override
+									
 									public Integer getEnd() {
 										return cb.getModel().getSize();
 									}
@@ -874,13 +877,13 @@ public class Combobox extends Textbox {
 		}
 	}
 
-	@Override
+	
 	public void sessionWillPassivate(Page page) {
 		super.sessionWillPassivate(page);
 		willPassivate(_model);
 		willPassivate(_renderer);
 	}
-	@Override
+	
 	public void sessionDidActivate(Page page) {
 		super.sessionDidActivate(page);
 		didActivate(_model);
