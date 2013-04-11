@@ -1,23 +1,40 @@
-<zk>
+<zk xmlns:n="native">
+
 	<label multiline="true">
-		Android, iOS Only
-		
-	</label>
+	Testing instruction (iOS/Android Only):
 	
-	<vlayout>
-		<hlayout>
-			Result = 
-			<label id="result" />
-		</hlayout>
-		<hlayout>
-			Decimalbox =
-			<decimalbox id="dbx">
-			<attribute name="onBlur">
-			<![CDATA[
-				result.setValue(dbx.getValue().toString());
-			]]>
-			</attribute>
-			</decimalbox>
-		</hlayout>
-	</vlayout> 
+	1. Change locale to Italian
+	2. Enter '123,45' into the first decimalbox
+	3. Change focus to the second decimalbox
+	
+	Expected result:
+	1. The value of the first decimalbox should stay as '123,45'.
+	2. It shouldn't be trimmed to display as '123'.
+	3. Repeat for '123.45'
+	4. The result should be '12345' since '.' is now considered as 'thousands grouping delimiter' 
+	</label>
+
+	<window
+		id="finestraIndex"
+		title="Hello World!!"
+		border="normal"
+		width="200px"
+		closable="true"
+		use="org.zkoss.zktest.test2.B65_ZK_1585_TestDecimalbox">
+
+		<label value="You are using: ${desktop.webApp.version}" />
+
+		<decimalbox
+			id="decimal"
+			value="123.45">
+		</decimalbox>
+		<decimalbox id="decimal2"></decimalbox>
+		
+		<label>input type="number" :</label>
+		<n:input type="number" />
+
+		<label>input type="text"   :</label>
+		<n:input type="text" />		 
+	</window>
+
 </zk>

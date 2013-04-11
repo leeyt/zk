@@ -80,14 +80,18 @@ zul.inp.NumberInputWidget = zk.$extends(zul.inp.FormatWidget, {
 		return this._allowKeys || _allowKeys;
 	},
 	doKeyPress_: function(evt){
-		//Bug ZK-1373: ALTGR + 3 key in Spanish keyboard is a combination of Ctrl + Alt + 3 for £á sign.
+		//Bug ZK-1373: ALTGR + 3 key in Spanish keyboard is a combination of Ctrl + Alt + 3 for Â£Ã¡ sign.
 		if (evt.ctrlKey && evt.altKey)
 			evt.stop();
 		if (!this._shallIgnore(evt, this.getAllowedKeys_()))
 			this.$supers('doKeyPress_', arguments);
 	},
 	getType: function () {
-		return zk.mobile ? 'number' : this._type;
+		// ZK-1585: Strange behavior of decimalbox on iOS and Android
+		//   European locale (e.g. Italian) uses ',' for decimal point. 
+		//   However, Safari Mobile would trim the number string '123,45' to '123'
+		//   if that string is entered into input type='number'. 
+		return zk.mobile ? ((zk.DECIMAL == '.') ? 'number' : 'text') : this._type;
 	}
 });
 })();

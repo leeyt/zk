@@ -11,6 +11,7 @@ ZK 6.5.3
   ZK-1701: Message for file upload is not good enough in German
   ZK-1708: Clients.showNotification doesn't work when using auto mode include component
   ZK-1699: Performance issue ZK-Bind getters are called multiple times
+  ZK-1585: Strange behavior of decimalbox on iOS and Android
 
   --------
 ZK 6.5.2
